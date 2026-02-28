@@ -3,6 +3,7 @@
   "package": "me.liqw.locatorborder.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "LocatorBarRendererMixin",
     "GuiMixin"
   ],
   "injectors": {
