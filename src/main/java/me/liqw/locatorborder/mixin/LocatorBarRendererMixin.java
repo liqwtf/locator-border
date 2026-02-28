@@ -1,5 +1,6 @@
 package me.liqw.locatorborder.mixin;
 
+import me.liqw.locatorborder.config.Configuration;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -22,7 +23,6 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(LocatorBarRenderer.class)
 public abstract class LocatorBarRendererMixin {
     private static final int DOT_SIZE = 9;
-    private static final int MARGIN = 4;
     @Shadow
     @Final
     private Minecraft minecraft;
@@ -46,8 +46,8 @@ public abstract class LocatorBarRendererMixin {
             float centerX = screenWidth / 2.0f;
             float centerY = screenHeight / 2.0f;
 
-            float edgeX = centerX - MARGIN;
-            float edgeY = centerY - MARGIN;
+            float edgeX = centerX - Configuration.margin;
+            float edgeY = centerY - Configuration.margin;
 
             minecraft.player.connection.getWaypointManager().forEachWaypoint(cameraEntity, trackedWaypoint -> {
                 if (!trackedWaypoint.id().left().map(uUID -> uUID.equals(cameraEntity.getUUID())).orElse(false)) {

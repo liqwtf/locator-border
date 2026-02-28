@@ -1,0 +1,5 @@
+{
+  "text.autoconfig.locator_border.title": "Locator Border Configuration",
+  "text.autoconfig.locator_border.option.margin": "Screen Margin",
+  "text.autoconfig.locator_border.option.margin.@Tooltip": "Distance from the screen edge"
+}
