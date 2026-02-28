@@ -1,5 +1,6 @@
 package me.liqw.locatorborder.mixin;
 
+import me.liqw.locatorborder.LocatorBorderClient;
 import me.liqw.locatorborder.config.Configuration;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -46,8 +47,9 @@ public abstract class LocatorBarRendererMixin {
             float centerX = screenWidth / 2.0f;
             float centerY = screenHeight / 2.0f;
 
-            float edgeX = centerX - Configuration.margin;
-            float edgeY = centerY - Configuration.margin;
+            Configuration config = LocatorBorderClient.getConfig();
+            float edgeX = centerX - config.margin;
+            float edgeY = centerY - config.margin;
 
             minecraft.player.connection.getWaypointManager().forEachWaypoint(cameraEntity, trackedWaypoint -> {
                 if (!trackedWaypoint.id().left().map(uUID -> uUID.equals(cameraEntity.getUUID())).orElse(false)) {
