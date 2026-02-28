@@ -3,7 +3,7 @@
 	"id": "locator-border",
 	"version": "${version}",
 	"name": "Locator Border",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Moves the locator bar to the edge of the screen",
 	"authors": [
 		"liqw"
 	],
