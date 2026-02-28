@@ -5,18 +5,17 @@
 	"name": "Locator Border",
 	"description": "This is an example description! Tell everyone what your mod is about!",
 	"authors": [
-		"Me!"
+		"liqw"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/liqwtf/locator-border"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/locator-border/icon.png",
-	"environment": "*",
+	"environment": "client",
 	"entrypoints": {
-		"main": [
-			"me.liqw.locatorborder.LocatorBorder"
+		"client": [
+			"me.liqw.locatorborder.LocatorBorderClient"
 		]
 	},
 	"mixins": [
@@ -27,5 +26,8 @@
 		"minecraft": "~1.21.11",
 		"java": ">=21",
 		"fabric-api": "*"
+	},
+	"suggests": {
+		"cloth-config": "*"
 	}
 }
