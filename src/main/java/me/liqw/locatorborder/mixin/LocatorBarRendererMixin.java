@@ -33,9 +33,9 @@ public abstract class LocatorBarRendererMixin {
 
     @Unique
     private int getFaceSizeForDistance(WaypointStyle style, float distance) {
-        if (distance < style.nearDistance()) return 8;
-        if (distance < style.farDistance()) return 4;
-        return 6;
+        if (distance >= style.farDistance()) return 4;
+        if (distance >= style.nearDistance()) return 6;
+        return 8;
     }
 
     @Unique
