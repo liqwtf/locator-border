@@ -22,6 +22,7 @@ import net.minecraft.world.waypoints.TrackedWaypoint;
 import net.minecraft.world.waypoints.Waypoint.Icon;
 import org.spongepowered.asm.mixin.*;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Mixin(LocatorBarRenderer.class)
@@ -111,8 +112,10 @@ public abstract class LocatorBarRendererMixin {
             graphics.pose().pushMatrix();
             graphics.pose().translate(renderX, renderY);
 
-            if (config.renderPlayerFace) {
-                waypoint.id().left().ifPresent(uuid -> renderPlayerFace(graphics, uuid, faceSize));
+            Optional<UUID> uuid = waypoint.id().left();
+
+            if (config.renderPlayerFace && uuid.isPresent()) {
+                renderPlayerFace(graphics, uuid.get(), faceSize);
             } else {
                 renderDefaultIcon(graphics, icon, distance, getWaypointColor(waypoint));
             }
