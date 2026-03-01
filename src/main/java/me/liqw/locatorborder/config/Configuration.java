@@ -8,5 +8,7 @@ import me.shedaniel.autoconfig.annotation.ConfigEntry;
 public class Configuration implements ConfigData {
     @ConfigEntry.BoundedDiscrete(min = 0, max = 16)
     @ConfigEntry.Gui.Tooltip
-    public int margin = 4;
+    public int borderOffset = 4;
+    @ConfigEntry.Gui.Tooltip
+    public boolean renderPlayerFace = false;
 }

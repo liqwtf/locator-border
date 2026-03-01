@@ -1,5 +1,7 @@
 {
   "text.autoconfig.locator_border.title": "Locator Border Configuration",
-  "text.autoconfig.locator_border.option.margin": "Screen Border Offset",
-  "text.autoconfig.locator_border.option.margin.@Tooltip": "Distance between waypoints and the edge of the screen"
+  "text.autoconfig.locator_border.option.borderOffset": "Screen Border Offset",
+  "text.autoconfig.locator_border.option.borderOffset.@Tooltip": "Distance between waypoints and the edge of the screen",
+  "text.autoconfig.locator_border.option.renderPlayerFace": "Player Face",
+  "text.autoconfig.locator_border.option.renderPlayerFace.@Tooltip": "Render waypoint icons as player heads"
 }
