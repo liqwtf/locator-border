@@ -11,4 +11,9 @@ public class Configuration implements ConfigData {
     public int borderOffset = 4;
     @ConfigEntry.Gui.Tooltip
     public boolean renderPlayerFace = false;
+
+    @ConfigEntry.Category("compass")
+    public boolean showCompass = false;
+    @ConfigEntry.Category("compass")
+    public boolean intercardinal = false;
 }

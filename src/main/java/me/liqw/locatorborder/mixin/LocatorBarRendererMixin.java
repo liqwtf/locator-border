@@ -2,6 +2,7 @@ package me.liqw.locatorborder.mixin;
 
 import me.liqw.locatorborder.LocatorBorderClient;
 import me.liqw.locatorborder.config.Configuration;
+import me.liqw.locatorborder.util.RenderPosition;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -46,12 +47,11 @@ public abstract class LocatorBarRendererMixin {
 
         graphics.fill(-borderSize / 2, -size / 2, borderSize / 2, size / 2, 0xFF000000);
         graphics.fill(-size / 2, -borderSize / 2, size / 2, borderSize / 2, 0xFF000000);
-
         PlayerFaceRenderer.draw(graphics, skin, -size / 2, -size / 2, size);
     }
 
     @Unique
-    private void renderDefaultIcon(GuiGraphics graphics, Icon icon, float distance, int color) {
+    private void renderWaypoint(GuiGraphics graphics, Icon icon, float distance, int color) {
         WaypointStyle style = this.minecraft.getWaypointStyles().get(icon.style);
         Identifier sprite = style.sprite(distance);
         graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, -DOT_SIZE / 2, -DOT_SIZE / 2, DOT_SIZE, DOT_SIZE, color);
@@ -59,10 +59,12 @@ public abstract class LocatorBarRendererMixin {
 
     @Unique
     private int getWaypointColor(TrackedWaypoint waypoint) {
-        return waypoint.icon().color.orElseGet(() -> waypoint.id().map(
-                uuid -> ARGB.setBrightness(ARGB.color(255, uuid.hashCode()), 0.9F),
-                string -> ARGB.setBrightness(ARGB.color(255, string.hashCode()), 0.9F)
-        ));
+        return waypoint.icon().color.orElseGet(() ->
+                waypoint.id().map(
+                    uuid -> ARGB.setBrightness(ARGB.color(255, uuid.hashCode()), 0.9F),
+                    string -> ARGB.setBrightness(ARGB.color(255, string.hashCode()), 0.9F)
+                )
+        );
     }
 
     /**
@@ -76,11 +78,7 @@ public abstract class LocatorBarRendererMixin {
 
         Level level = cameraEntity.level();
         Configuration config = LocatorBorderClient.getConfig();
-
-        float centerX = graphics.guiWidth() / 2.0f;
-        float centerY = graphics.guiHeight() / 2.0f;
-        float edgeX = centerX - config.borderOffset;
-        float edgeY = centerY - config.borderOffset;
+        Camera camera = this.minecraft.gameRenderer.getMainCamera();
 
         boolean isFrozen = level.tickRateManager().isEntityFrozen(cameraEntity);
         PartialTickSupplier tickSupplier = entity -> delta.getGameTimeDeltaPartialTick(!isFrozen);
@@ -88,39 +86,21 @@ public abstract class LocatorBarRendererMixin {
         this.minecraft.player.connection.getWaypointManager().forEachWaypoint(cameraEntity, waypoint -> {
             if (waypoint.id().left().filter(uuid -> uuid.equals(cameraEntity.getUUID())).isPresent()) return;
 
-            Camera camera = this.minecraft.gameRenderer.getMainCamera();
+            float angle = (float) waypoint.yawAngleToCamera(level, camera, tickSupplier);
 
-            double angleRadians = Math.toRadians(waypoint.yawAngleToCamera(level, camera, tickSupplier));
-            float directionX = (float) Math.sin(angleRadians);
-            float directionY = (float) -Math.cos(angleRadians);
+            RenderPosition.draw(graphics, angle, config.borderOffset, (g) -> {
+                Icon icon = waypoint.icon();
+                WaypointStyle style = this.minecraft.getWaypointStyles().get(icon.style);
+                float distance = Mth.sqrt((float) waypoint.distanceSquared(cameraEntity));
 
-            float ratioX = Math.abs(directionX / (edgeX / centerX));
-            float ratioY = Math.abs(directionY / (edgeY / centerY));
-            float projectionFactor = Math.max(ratioX, ratioY);
+                Optional<UUID> uuid = waypoint.id().left();
 
-            boolean isHittingBottomEdge = (ratioY >= ratioX) && directionY > 0;
-            if (isHittingBottomEdge) return;
-
-            float renderX = centerX + (directionX / projectionFactor) * edgeX;
-            float renderY = centerY + (directionY / projectionFactor) * edgeY;
-
-            Icon icon = waypoint.icon();
-            WaypointStyle style = this.minecraft.getWaypointStyles().get(icon.style);
-            float distance =  Mth.sqrt((float) waypoint.distanceSquared(cameraEntity));
-            int faceSize = getFaceSizeForDistance(style, distance);
-
-            graphics.pose().pushMatrix();
-            graphics.pose().translate(renderX, renderY);
-
-            Optional<UUID> uuid = waypoint.id().left();
-
-            if (config.renderPlayerFace && uuid.isPresent()) {
-                renderPlayerFace(graphics, uuid.get(), faceSize);
-            } else {
-                renderDefaultIcon(graphics, icon, distance, getWaypointColor(waypoint));
-            }
-
-            graphics.pose().popMatrix();
+                if (config.renderPlayerFace && uuid.isPresent()) {
+                    renderPlayerFace(g, uuid.get(), getFaceSizeForDistance(style, distance));
+                } else {
+                    renderWaypoint(g, icon, distance, getWaypointColor(waypoint));
+                }
+            });
         });
     }
 
@@ -129,6 +109,5 @@ public abstract class LocatorBarRendererMixin {
      * @reason don't render bar
      */
     @Overwrite
-    public void renderBackground(GuiGraphics graphics, DeltaTracker delta) {
-    }
+    public void renderBackground(GuiGraphics graphics, DeltaTracker delta) {}
 }
