@@ -40,22 +40,24 @@ public abstract class LocatorBarRendererMixin {
     }
 
     @Unique
-    private int getWaypointColor(TrackedWaypoint waypoint, Configuration.WaypointColor color) {
-        return switch (color) {
+    private int getWaypointColor(TrackedWaypoint waypoint, Configuration.WaypointColor source) {
+        return switch (source) {
             case Waypoint -> waypoint.icon().color.orElseGet(() ->
                     waypoint.id().map(
                             uuid -> ARGB.setBrightness(ARGB.color(255, uuid.hashCode()), 0.9F),
                             string -> ARGB.setBrightness(ARGB.color(255, string.hashCode()), 0.9F)
                     ));
             case Team -> waypoint.id().left()
-                    .map(this.minecraft.level::getPlayerByUUID)
-                    .map(player -> 0xFF000000 | player.getTeamColor())
+                    .map(this.minecraft.getConnection()::getPlayerInfo)
+                    .map(info -> this.minecraft.level.getScoreboard().getPlayersTeam(info.getProfile().name()))
+                    .map(team -> team.getColor().getColor())
+                    .map(color -> 0xFF000000 | color)
                     .orElseGet(() -> getWaypointColor(waypoint, Configuration.WaypointColor.Waypoint));
         };
     }
 
-    @Unique int getOutlineColor(TrackedWaypoint waypoint, Configuration.OutlineColor color) {
-        return switch (color) {
+    @Unique int getOutlineColor(TrackedWaypoint waypoint, Configuration.OutlineColor source) {
+        return switch (source) {
             case Waypoint -> getWaypointColor(waypoint, Configuration.WaypointColor.Waypoint);
             case Team -> getWaypointColor(waypoint, Configuration.WaypointColor.Team);
             case Black -> 0xFF000000;
