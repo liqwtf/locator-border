@@ -12,7 +12,6 @@ import net.minecraft.client.gui.contextualbar.LocatorBarRenderer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.WaypointStyle;
-import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -34,9 +33,7 @@ public abstract class LocatorBarRendererMixin {
     private static final int OUTLINE_TICKNESS = 1;
 
     @Unique
-    private int getIconSize(float distance, Configuration config) {
-        if (!config.renderPlayerFace.distanceScale) return 8;
-
+    private int getIconSize(float distance) {
         if (distance >= WaypointStyle.DEFAULT_FAR_DISTANCE) return 4;
         if (distance >= WaypointStyle.DEFAULT_NEAR_DISTANCE) return 6;
         return 8;
@@ -66,29 +63,66 @@ public abstract class LocatorBarRendererMixin {
     }
 
     @Unique
-    private void drawWaypoint(GuiGraphics graphics, Entity camera, TrackedWaypoint waypoint, Configuration config) {
+    private void displayName(GuiGraphics graphics, String name, float angle, int iconSize) {
+        int width = this.minecraft.font.width(name);
+        int lineHeight = this.minecraft.font.lineHeight;
+        int marginX = 6, marginY = 4;
+
+        double radians = Math.toRadians(angle);
+        float dirX = (float) Math.sin(radians);
+        float dirY = (float) -Math.cos(radians);
+
+        int x, y;
+
+        if (Math.abs(dirY) > Math.abs(dirX)) {
+            x = -width / 2;
+            y = (dirY > 0) ? (-iconSize / 2 - lineHeight - marginY) : (iconSize / 2 + marginY);
+        } else {
+            x = (dirX > 0) ? (-iconSize / 2 - width - marginX) : (iconSize / 2 + marginX);
+            y = -lineHeight / 2;
+        }
+
+        graphics.drawString(this.minecraft.font, name, x, y, 0xFFFFFFFF);
+    }
+
+    @Unique
+    private void drawWaypoint(GuiGraphics graphics, Entity camera, TrackedWaypoint waypoint, Configuration config, float angle) {
         float distance = Mth.sqrt((float) waypoint.distanceSquared(camera));
         Optional<UUID> uuid = waypoint.id().left();
+        int size = (config.renderPlayerFace.enabled && uuid.isPresent())
+                ? getIconSize(distance) : DOT_SIZE;
 
         if (config.renderPlayerFace.enabled && uuid.isPresent()) {
             PlayerSkin skin = DefaultPlayerSkin.get(uuid.get());
-            int size = getIconSize(distance, config);
-            int outlineColor = getOutlineColor(waypoint, config.renderPlayerFace.outlineColor);
-            int outlineThickness = size + OUTLINE_TICKNESS * 2;
+            int color = getOutlineColor(waypoint, config.renderPlayerFace.outlineColor);
+            int outline = size + OUTLINE_TICKNESS * 2;
 
-            graphics.fill(-outlineThickness / 2, -size / 2, outlineThickness / 2, size / 2, outlineColor);
-            graphics.fill(-size / 2, -outlineThickness / 2, size / 2, outlineThickness / 2, outlineColor);
+            graphics.fill(-outline / 2, -size / 2, outline / 2, size / 2, color);
+            graphics.fill(-size / 2, -outline / 2, size / 2, outline / 2, color);
             PlayerFaceRenderer.draw(graphics, skin, -size / 2, -size / 2, size);
+        } else {
+            Icon icon = waypoint.icon();
+            WaypointStyle style = this.minecraft.getWaypointStyles().get(icon.style);
+            int color = getWaypointColor(waypoint, config.waypointColor);
 
-            return;
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, style.sprite(distance), -size / 2, -size / 2, size, size, color);
         }
 
-        Icon icon = waypoint.icon();
-        WaypointStyle style = this.minecraft.getWaypointStyles().get(icon.style);
-        int color = getWaypointColor(waypoint, config.waypointColor);
-        Identifier sprite = style.sprite(distance);
+        if (uuid.isPresent()) {
+            boolean visible = switch (config.displayNames) {
+                case PlayerList -> this.minecraft.options.keyPlayerList.isDown();
+                case Focal -> Math.abs(angle) < 15.0f;
+                case Always -> true;
+                default -> false;
+            };
 
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, -DOT_SIZE / 2, -DOT_SIZE / 2, DOT_SIZE, DOT_SIZE, color);
+            if (visible) {
+                var playerInfo = this.minecraft.getConnection().getPlayerInfo(uuid.get());
+                if (playerInfo != null) {
+                    displayName(graphics, playerInfo.getProfile().name(), angle, size);
+                }
+            }
+        }
     }
 
     /**
@@ -113,7 +147,7 @@ public abstract class LocatorBarRendererMixin {
             float angle = (float) waypoint.yawAngleToCamera(level, camera, tickSupplier);
 
             RenderPosition.draw(graphics, angle, config, (g) -> {
-                drawWaypoint(g, cameraEntity, waypoint, config);
+                drawWaypoint(g, cameraEntity, waypoint, config, angle);
             });
         });
     }

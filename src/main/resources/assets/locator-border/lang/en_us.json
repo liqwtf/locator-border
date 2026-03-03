@@ -6,6 +6,8 @@
   "text.autoconfig.locator_border.option.screenMargin.@Tooltip": "Distance between waypoints and the edge of the screen",
   "text.autoconfig.locator_border.option.waypointColor": "Waypoint Color",
   "text.autoconfig.locator_border.option.waypointColor.@Tooltip": "Decides the color of the waypoint",
+  "text.autoconfig.locator_border.option.displayNames": "Display Names",
+  "text.autoconfig.locator_border.option.displayNames.@Tooltip": "Show usernames next to waypoints",
 
   "text.autoconfig.locator_border.option.renderPlayerFace": "Render Player Face",
   "text.autoconfig.locator_border.option.renderPlayerFace.enabled": "Enabled",

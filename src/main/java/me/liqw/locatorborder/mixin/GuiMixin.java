@@ -52,7 +52,7 @@ public abstract class GuiMixin {
             if (point.isIntercardinal() && !config.intercardinal) continue;
 
             RenderPosition.draw(graphics, point.angle() - yaw, config, (g) -> {
-                g.drawCenteredString(this.minecraft.font, point.label(), 0, -4, 0xFFFFFFFF);
+                g.drawCenteredString(this.minecraft.font, point.label(), 0, -this.minecraft.font.lineHeight / 2, 0xFFFFFFFF);
             });
         }
     }
