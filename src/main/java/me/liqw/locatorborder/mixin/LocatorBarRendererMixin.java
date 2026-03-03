@@ -1,6 +1,6 @@
 package me.liqw.locatorborder.mixin;
 
-import me.liqw.locatorborder.LocatorBorderClient;
+import me.liqw.locatorborder.LocatorBorder;
 import me.liqw.locatorborder.config.Configuration;
 import me.liqw.locatorborder.util.RenderPosition;
 import net.minecraft.client.Camera;
@@ -31,40 +31,64 @@ public abstract class LocatorBarRendererMixin {
     @Shadow @Final private Minecraft minecraft;
 
     private static final int DOT_SIZE = 9;
-    private static final int BORDER_PADDING = 2;
+    private static final int OUTLINE_TICKNESS = 1;
 
     @Unique
-    private int getFaceSizeForDistance(WaypointStyle style, float distance) {
-        if (distance >= style.farDistance()) return 4;
-        if (distance >= style.nearDistance()) return 6;
+    private int getIconSize(float distance, Configuration config) {
+        if (!config.renderPlayerFace.distanceScale) return 8;
+
+        if (distance >= WaypointStyle.DEFAULT_FAR_DISTANCE) return 4;
+        if (distance >= WaypointStyle.DEFAULT_NEAR_DISTANCE) return 6;
         return 8;
     }
 
     @Unique
-    private void renderPlayerFace(GuiGraphics graphics, UUID uuid, int size) {
-        PlayerSkin skin = DefaultPlayerSkin.get(uuid);
-        int borderSize = size + BORDER_PADDING;
+    private int getWaypointColor(TrackedWaypoint waypoint, Configuration.WaypointColor color) {
+        return switch (color) {
+            case Waypoint -> waypoint.icon().color.orElseGet(() ->
+                    waypoint.id().map(
+                            uuid -> ARGB.setBrightness(ARGB.color(255, uuid.hashCode()), 0.9F),
+                            string -> ARGB.setBrightness(ARGB.color(255, string.hashCode()), 0.9F)
+                    ));
+            case Team -> waypoint.id().left()
+                    .map(this.minecraft.level::getPlayerByUUID)
+                    .map(player -> 0xFF000000 | player.getTeamColor())
+                    .orElseGet(() -> getWaypointColor(waypoint, Configuration.WaypointColor.Waypoint));
+        };
+    }
 
-        graphics.fill(-borderSize / 2, -size / 2, borderSize / 2, size / 2, 0xFF000000);
-        graphics.fill(-size / 2, -borderSize / 2, size / 2, borderSize / 2, 0xFF000000);
-        PlayerFaceRenderer.draw(graphics, skin, -size / 2, -size / 2, size);
+    @Unique int getOutlineColor(TrackedWaypoint waypoint, Configuration.OutlineColor color) {
+        return switch (color) {
+            case Waypoint -> getWaypointColor(waypoint, Configuration.WaypointColor.Waypoint);
+            case Team -> getWaypointColor(waypoint, Configuration.WaypointColor.Team);
+            case Black -> 0xFF000000;
+        };
     }
 
     @Unique
-    private void renderWaypoint(GuiGraphics graphics, Icon icon, float distance, int color) {
+    private void drawWaypoint(GuiGraphics graphics, Entity camera, TrackedWaypoint waypoint, Configuration config) {
+        float distance = Mth.sqrt((float) waypoint.distanceSquared(camera));
+        Optional<UUID> uuid = waypoint.id().left();
+
+        if (config.renderPlayerFace.enabled && uuid.isPresent()) {
+            PlayerSkin skin = DefaultPlayerSkin.get(uuid.get());
+            int size = getIconSize(distance, config);
+            int outlineColor = getOutlineColor(waypoint, config.renderPlayerFace.outlineColor);
+            int outlineThickness = size + OUTLINE_TICKNESS * 2;
+
+            graphics.fill(-outlineThickness / 2, -size / 2, outlineThickness / 2, size / 2, outlineColor);
+            graphics.fill(-size / 2, -outlineThickness / 2, size / 2, outlineThickness / 2, outlineColor);
+            PlayerFaceRenderer.draw(graphics, skin, -size / 2, -size / 2, size);
+
+            return;
+        }
+
+        Icon icon = waypoint.icon();
         WaypointStyle style = this.minecraft.getWaypointStyles().get(icon.style);
+        int color = getWaypointColor(waypoint, config.waypointColor);
         Identifier sprite = style.sprite(distance);
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, -DOT_SIZE / 2, -DOT_SIZE / 2, DOT_SIZE, DOT_SIZE, color);
-    }
 
-    @Unique
-    private int getWaypointColor(TrackedWaypoint waypoint) {
-        return waypoint.icon().color.orElseGet(() ->
-                waypoint.id().map(
-                    uuid -> ARGB.setBrightness(ARGB.color(255, uuid.hashCode()), 0.9F),
-                    string -> ARGB.setBrightness(ARGB.color(255, string.hashCode()), 0.9F)
-                )
-        );
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, -DOT_SIZE / 2, -DOT_SIZE / 2, DOT_SIZE, DOT_SIZE, color);
     }
 
     /**
@@ -77,7 +101,7 @@ public abstract class LocatorBarRendererMixin {
         if (cameraEntity == null || this.minecraft.player == null) return;
 
         Level level = cameraEntity.level();
-        Configuration config = LocatorBorderClient.getConfig();
+        Configuration config = LocatorBorder.getConfig();
         Camera camera = this.minecraft.gameRenderer.getMainCamera();
 
         boolean isFrozen = level.tickRateManager().isEntityFrozen(cameraEntity);
@@ -88,18 +112,8 @@ public abstract class LocatorBarRendererMixin {
 
             float angle = (float) waypoint.yawAngleToCamera(level, camera, tickSupplier);
 
-            RenderPosition.draw(graphics, angle, config.borderOffset, (g) -> {
-                Icon icon = waypoint.icon();
-                WaypointStyle style = this.minecraft.getWaypointStyles().get(icon.style);
-                float distance = Mth.sqrt((float) waypoint.distanceSquared(cameraEntity));
-
-                Optional<UUID> uuid = waypoint.id().left();
-
-                if (config.renderPlayerFace && uuid.isPresent()) {
-                    renderPlayerFace(g, uuid.get(), getFaceSizeForDistance(style, distance));
-                } else {
-                    renderWaypoint(g, icon, distance, getWaypointColor(waypoint));
-                }
+            RenderPosition.draw(graphics, angle, config, (g) -> {
+                drawWaypoint(g, cameraEntity, waypoint, config);
             });
         });
     }

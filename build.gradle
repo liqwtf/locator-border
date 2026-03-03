@@ -42,7 +42,6 @@ processResources {
 
 tasks.withType(JavaCompile).configureEach {
     it.options.release = 21
-    it.options.compilerArgs << "-Amixin.export.overwrites=false"
 }
 
 java {

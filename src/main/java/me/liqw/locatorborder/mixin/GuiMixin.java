@@ -1,6 +1,6 @@
 package me.liqw.locatorborder.mixin;
 
-import me.liqw.locatorborder.LocatorBorderClient;
+import me.liqw.locatorborder.LocatorBorder;
 import me.liqw.locatorborder.config.Configuration;
 import me.liqw.locatorborder.util.CompassPoints;
 import me.liqw.locatorborder.util.RenderPosition;
@@ -20,7 +20,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Gui.class)
 public abstract class GuiMixin {
-    @Shadow @Final private Minecraft minecraft;
+    @Shadow
+    @Final
+    private Minecraft minecraft;
 
     @ModifyVariable(method = "nextContextualInfoState", at = @At("STORE"), ordinal = 0)
     private boolean forceLocatorStateOff(boolean original) {
@@ -37,9 +39,9 @@ public abstract class GuiMixin {
 
     @Inject(method = "render", at = @At("TAIL"))
     private void renderCompass(GuiGraphics graphics, DeltaTracker delta, CallbackInfo ci) {
-        Configuration config = LocatorBorderClient.getConfig();
+        Configuration config = LocatorBorder.getConfig();
 
-        if (this.minecraft.options.hideGui || !config.showCompass) return;
+        if (this.minecraft.options.hideGui || !config.cardinalDirections) return;
 
         Entity cameraEntity = this.minecraft.getCameraEntity();
         if (cameraEntity == null) return;
@@ -49,8 +51,8 @@ public abstract class GuiMixin {
         for (CompassPoints.Point point : CompassPoints.POINTS) {
             if (point.isIntercardinal() && !config.intercardinal) continue;
 
-            RenderPosition.draw(graphics,point.angle()-yaw,config.borderOffset,(g) -> {
-                g.drawString(this.minecraft.font, point.label(), -(this.minecraft.font.width(point.label()) / 2), -4, 0xFFFFFFFF, true);
+            RenderPosition.draw(graphics, point.angle() - yaw, config, (g) -> {
+                g.drawCenteredString(this.minecraft.font, point.label(), 0, -4, 0xFFFFFFFF);
             });
         }
     }

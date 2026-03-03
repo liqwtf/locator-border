@@ -1,5 +1,6 @@
 package me.liqw.locatorborder.util;
 
+import me.liqw.locatorborder.config.Configuration;
 import net.minecraft.client.gui.GuiGraphics;
 
 public class RenderPosition {
@@ -28,8 +29,8 @@ public class RenderPosition {
         return new Result(renderX, renderY, isBottom);
     }
 
-    public static void draw(GuiGraphics graphics, float angle, float offset, DrawAction drawAction) {
-        Result result = calculate(graphics, angle, offset);
+    public static void draw(GuiGraphics graphics, float angle, Configuration config, DrawAction drawAction) {
+        Result result = calculate(graphics, angle, config.screenMargin);
 
         if (result.isBottom()) return;
 

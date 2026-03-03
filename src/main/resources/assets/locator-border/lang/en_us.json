@@ -2,12 +2,20 @@
   "text.autoconfig.locator_border.title": "Locator Border Configuration",
 
   "text.autoconfig.locator_border.category.default": "General",
-  "text.autoconfig.locator_border.option.borderOffset": "Screen Border Offset",
-  "text.autoconfig.locator_border.option.borderOffset.@Tooltip": "Distance between waypoints and the edge of the screen",
-  "text.autoconfig.locator_border.option.renderPlayerFace": "Player Face",
-  "text.autoconfig.locator_border.option.renderPlayerFace.@Tooltip": "Render waypoint icons as player heads",
+  "text.autoconfig.locator_border.option.screenMargin": "Screen Margin",
+  "text.autoconfig.locator_border.option.screenMargin.@Tooltip": "Distance between waypoints and the edge of the screen",
+  "text.autoconfig.locator_border.option.waypointColor": "Waypoint Color",
+  "text.autoconfig.locator_border.option.waypointColor.@Tooltip": "Decides the color of the waypoint",
 
-  "text.autoconfig.locator_border.category.compass": "Compass",
-  "text.autoconfig.locator_border.option.showCompass": "Cardinal Directions",
-  "text.autoconfig.locator_border.option.intercardinal": "Intercardinal"
+  "text.autoconfig.locator_border.option.renderPlayerFace": "Render Player Face",
+  "text.autoconfig.locator_border.option.renderPlayerFace.enabled": "Enabled",
+  "text.autoconfig.locator_border.option.renderPlayerFace.enabled.@Tooltip": "Render waypoint icons as player heads",
+  "text.autoconfig.locator_border.option.renderPlayerFace.distanceScale": "Scale With Distance",
+  "text.autoconfig.locator_border.option.renderPlayerFace.distanceScale.@Tooltip": "Whether to scale player heads with distance",
+  "text.autoconfig.locator_border.option.renderPlayerFace.outlineColor": "Outline Color",
+  "text.autoconfig.locator_border.option.renderPlayerFace.outlineColor.@Tooltip": "Decides the color of the outline",
+
+  "text.autoconfig.locator_border.category.directions": "Cardinal Directions",
+  "text.autoconfig.locator_border.option.cardinalDirections": "Show Cardinal Directions",
+  "text.autoconfig.locator_border.option.intercardinal": "+ Intercardinal"
 }
