@@ -101,7 +101,7 @@ public abstract class LocatorBarRendererMixin {
 
             graphics.fill(-outline / 2, -size / 2, outline / 2, size / 2, color);
             graphics.fill(-size / 2, -outline / 2, size / 2, outline / 2, color);
-            PlayerFaceRenderer.draw(graphics, skin, -size / 2, -size / 2, size);
+            PlayerFaceRenderer.draw(graphics, skin, -size / 2, -size / 2, size, color);
         } else {
             Icon icon = waypoint.icon();
             WaypointStyle style = this.minecraft.getWaypointStyles().get(icon.style);
