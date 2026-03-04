@@ -2,10 +2,10 @@
   "text.autoconfig.locator_border.title": "Locator Border Configuration",
 
   "text.autoconfig.locator_border.category.default": "General",
-  "text.autoconfig.locator_border.option.screenMargin": "Screen Margin",
-  "text.autoconfig.locator_border.option.screenMargin.@Tooltip": "Distance between waypoints and the edge of the screen",
-  "text.autoconfig.locator_border.option.waypointColor": "Waypoint Color",
-  "text.autoconfig.locator_border.option.waypointColor.@Tooltip": "Decides the color of the waypoint",
+  "text.autoconfig.locator_border.option.margin": "Screen Margin",
+  "text.autoconfig.locator_border.option.margin.@Tooltip": "Distance between waypoints and the edge of the screen",
+  "text.autoconfig.locator_border.option.color": "Waypoint Color",
+  "text.autoconfig.locator_border.option.color.@Tooltip": "Decides the color of the waypoint",
   "text.autoconfig.locator_border.option.displayNames": "Display Names",
   "text.autoconfig.locator_border.option.displayNames.@Tooltip": "Show usernames next to waypoints",
 
@@ -14,8 +14,8 @@
   "text.autoconfig.locator_border.option.renderPlayerFace.enabled.@Tooltip": "Render waypoint icons as player heads",
   "text.autoconfig.locator_border.option.renderPlayerFace.distanceScale": "Scale With Distance",
   "text.autoconfig.locator_border.option.renderPlayerFace.distanceScale.@Tooltip": "Whether to scale player heads with distance",
-  "text.autoconfig.locator_border.option.renderPlayerFace.outlineColor": "Outline Color",
-  "text.autoconfig.locator_border.option.renderPlayerFace.outlineColor.@Tooltip": "Decides the color of the outline",
+  "text.autoconfig.locator_border.option.renderPlayerFace.color": "Outline Color",
+  "text.autoconfig.locator_border.option.renderPlayerFace.color.@Tooltip": "Decides the color of the outline",
 
   "text.autoconfig.locator_border.category.directions": "Cardinal Directions",
   "text.autoconfig.locator_border.option.cardinalDirections": "Show Cardinal Directions",

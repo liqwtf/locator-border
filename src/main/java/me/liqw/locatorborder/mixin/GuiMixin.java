@@ -51,8 +51,8 @@ public abstract class GuiMixin {
         for (CompassPoints.Point point : CompassPoints.POINTS) {
             if (point.isIntercardinal() && !config.intercardinal) continue;
 
-            RenderPosition.draw(graphics, point.angle() - yaw, config, (g) -> {
-                g.drawCenteredString(this.minecraft.font, point.label(), 0, -this.minecraft.font.lineHeight / 2, 0xFFFFFFFF);
+            RenderPosition.draw(graphics, point.angle() - yaw, config, (g, alpha) -> {
+                g.drawCenteredString(this.minecraft.font, point.label(), 0, -this.minecraft.font.lineHeight / 2, RenderPosition.setAlpha(0xFFFFFFFF, alpha));
             });
         }
     }

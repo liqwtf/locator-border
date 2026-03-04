@@ -1,13 +1,12 @@
 package me.liqw.locatorborder.util;
 
-import me.liqw.locatorborder.LocatorBorder;
 import me.liqw.locatorborder.config.Configuration;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
 
 public class RenderPosition {
-    private static final float HALF_HOTBAR_WIDTH = 182.0f / 2.0f + 10.0f;
-    private static final float TRANSFORM_BUFFER = 30.0f;
+    private static final float HALF_HOTBAR_WIDTH = 182.0f / 2.0f + 12.0f;
+    private static final float TRANSFORM_BUFFER = 48.0f;
 
     public static Position calculate(GuiGraphics graphics, float angle, float offset) {
         float centerX = graphics.guiWidth() / 2.0f;
@@ -31,23 +30,26 @@ public class RenderPosition {
     }
 
     public static void draw(GuiGraphics graphics, float angle, Configuration config, DrawAction drawAction) {
-        Position position = calculate(graphics, angle, config.screenMargin);
+        Position position = calculate(graphics, angle, config.margin);
         float centerX = graphics.guiWidth() / 2.0f;
         float centerY = graphics.guiHeight() / 2.0f;
 
-        float scale = Mth.clamp((Math.abs(position.x() - centerX) - HALF_HOTBAR_WIDTH) / TRANSFORM_BUFFER, 0.0f, 1.0f);
-        if (scale <= 0.0f && position.y() > centerY) return;
+        float alpha = position.y() > centerY ? Mth.clamp((Math.abs(position.x() - centerX) - HALF_HOTBAR_WIDTH ) / TRANSFORM_BUFFER, 0.0f, 1.0f) : 1.0f;
+        if (alpha <= 0.0f) return;
 
         graphics.pose().pushMatrix();
         graphics.pose().translate(position.x(), position.y());
-        graphics.pose().scale(position.y() > centerY ? scale : 1.0f);
-        drawAction.draw(graphics);
+        drawAction.draw(graphics, alpha);
         graphics.pose().popMatrix();
+    }
+
+    public static int setAlpha(int color, float alpha) {
+        return (color & 0x00FFFFFF) | ((int) (((color >> 24) & 0xFF) * alpha) << 24);
     }
 
     @FunctionalInterface
     public interface DrawAction {
-        void draw(GuiGraphics graphics);
+        void draw(GuiGraphics graphics, float alpha);
     }
 
     public record Position(float x, float y) {}

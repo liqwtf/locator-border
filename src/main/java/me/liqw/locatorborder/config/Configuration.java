@@ -24,10 +24,10 @@ public class Configuration implements ConfigData {
 
     @ConfigEntry.Gui.Tooltip
     @ConfigEntry.BoundedDiscrete(min = 0, max = 16)
-    public int screenMargin = 4;
+    public int margin = 4;
     @ConfigEntry.Gui.Tooltip
     @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
-    public WaypointColor waypointColor = WaypointColor.Waypoint;
+    public WaypointColor color = WaypointColor.Waypoint;
     @ConfigEntry.Gui.Tooltip
     @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
     public DisplayNames displayNames = DisplayNames.Never;
@@ -44,6 +44,6 @@ public class Configuration implements ConfigData {
         public boolean enabled = false;
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
-        public OutlineColor outlineColor = OutlineColor.Black;
+        public OutlineColor color = OutlineColor.Black;
     }
 }
