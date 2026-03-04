@@ -52,7 +52,7 @@ public abstract class LocatorBarRendererMixin {
                     .map(info -> this.minecraft.level.getScoreboard().getPlayersTeam(info.getProfile().name()))
                     .map(team -> team.getColor().getColor())
                     .map(color -> 0xFF000000 | color)
-                    .orElseGet(() -> getWaypointColor(waypoint, Configuration.WaypointColor.Waypoint));
+                    .orElse(0xFFFFFFFF);
         };
     }
 
