@@ -3,7 +3,7 @@ package me.liqw.locatorborder.mixin;
 import me.liqw.locatorborder.LocatorBorder;
 import me.liqw.locatorborder.config.Configuration;
 import me.liqw.locatorborder.util.CompassPoints;
-import me.liqw.locatorborder.util.RenderPosition;
+import me.liqw.locatorborder.util.WaypointState;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -20,9 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Gui.class)
 public abstract class GuiMixin {
-    @Shadow
-    @Final
-    private Minecraft minecraft;
+    @Shadow @Final private Minecraft minecraft;
 
     @ModifyVariable(method = "nextContextualInfoState", at = @At("STORE"), ordinal = 0)
     private boolean forceLocatorStateOff(boolean original) {
@@ -51,8 +49,10 @@ public abstract class GuiMixin {
         for (CompassPoints.Point point : CompassPoints.POINTS) {
             if (point.isIntercardinal() && !config.intercardinal) continue;
 
-            RenderPosition.draw(graphics, point.angle() - yaw, config, (g, alpha) -> {
-                g.drawCenteredString(this.minecraft.font, point.label(), 0, -this.minecraft.font.lineHeight / 2, RenderPosition.setAlpha(0xFFFFFFFF, alpha));
+            WaypointState.project(graphics, point.angle() - yaw, config, (g, state) -> {
+                int color = state.setAlpha(point.getColor());
+
+                g.drawCenteredString(this.minecraft.font, point.label(), 0, -this.minecraft.font.lineHeight / 2, color);
             });
         }
     }

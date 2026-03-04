@@ -12,5 +12,10 @@ public class CompassPoints {
             new Point("NE", 315.0f, true)
     };
 
-    public record Point(String label, float angle, boolean isIntercardinal) {}
+    public record Point(String label, float angle, boolean isIntercardinal) {
+        public int getColor() {
+            if (label.equals("N")) return 0xFFFF5555;
+            return isIntercardinal ? 0xFFAAAAAA : 0xFFFFFFFF;
+        }
+    }
 }
