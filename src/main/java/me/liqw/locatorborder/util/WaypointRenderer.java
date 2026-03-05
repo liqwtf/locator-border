@@ -21,14 +21,62 @@ public class WaypointRenderer {
     private static final int DOT_SIZE = 9;
     private static final int OUTLINE = 1;
 
-    private static int getIconSize(float distance) {
+    private final GuiGraphics graphics;
+    private final Minecraft client;
+    private final Configuration config;
+    private final WaypointState.RenderState state;
+
+    public WaypointRenderer(GuiGraphics graphics, Minecraft client, Configuration config, WaypointState.RenderState state) {
+        this.graphics = graphics;
+        this.client = client;
+        this.config = config;
+        this.state = state;
+    }
+
+    public void draw(Entity cameraEntity, TrackedWaypoint waypoint, float angle) {
+        UUID uuid = waypoint.id().left().orElse(null);
+        PlayerInfo player = uuid != null ? client.getConnection().getPlayerInfo(uuid) : null;
+        boolean renderPlayerFace = config.renderPlayerFace.enabled && uuid != null;
+        float distance = Mth.sqrt((float) waypoint.distanceSquared(cameraEntity));
+        int size = renderPlayerFace ? getIconSize(distance) : DOT_SIZE;
+
+        if (renderPlayerFace) {
+            PlayerSkin skin = player != null ? player.getSkin() : DefaultPlayerSkin.get(uuid);
+            int color = getOutlineColor(waypoint, config.renderPlayerFace.color);
+            int outlineSize = size + OUTLINE * 2;
+
+            graphics.fill(-outlineSize / 2, -size / 2, outlineSize / 2, size / 2, state.setAlpha(color));
+            graphics.fill(-size / 2, -outlineSize / 2, size / 2, outlineSize / 2, state.setAlpha(color));
+            PlayerFaceRenderer.draw(graphics, skin, -size / 2, -size / 2, size, state.setAlpha(0xFFFFFFFF));
+        } else {
+            Waypoint.Icon icon = waypoint.icon();
+            WaypointStyle style = client.getWaypointStyles().get(icon.style);
+            int color = getWaypointColor(waypoint, config.color);
+
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, style.sprite(distance), -size / 2, -size / 2, size, size, state.setAlpha(color));
+        }
+
+        if (player != null) {
+            boolean visible = switch (config.displayNames) {
+                case PlayerList -> client.options.keyPlayerList.isDown();
+                case Focal -> Math.abs(angle) < 15.0f;
+                case Always -> true;
+                default -> false;
+            };
+
+            if (visible) {
+                displayName(graphics, client, player.getProfile().name(), size, state);
+            }
+        }
+    }
+
+    private int getIconSize(float distance) {
         if (distance >= WaypointStyle.DEFAULT_FAR_DISTANCE) return 4;
         if (distance >= WaypointStyle.DEFAULT_NEAR_DISTANCE) return 6;
         return 8;
     }
 
-
-    private static int getWaypointColor(Minecraft client, TrackedWaypoint waypoint, Configuration.WaypointColor source) {
+    private int getWaypointColor(TrackedWaypoint waypoint, Configuration.WaypointColor source) {
         return switch (source) {
             case Waypoint -> waypoint.icon().color.orElseGet(() ->
                     waypoint.id().map(
@@ -44,15 +92,15 @@ public class WaypointRenderer {
         };
     }
 
-    private static int getOutlineColor(Minecraft client, TrackedWaypoint waypoint, Configuration.OutlineColor source) {
+    private int getOutlineColor(TrackedWaypoint waypoint, Configuration.OutlineColor source) {
         return switch (source) {
-            case Waypoint -> getWaypointColor(client, waypoint, Configuration.WaypointColor.Waypoint);
-            case Team -> getWaypointColor(client, waypoint, Configuration.WaypointColor.Team);
+            case Waypoint -> getWaypointColor(waypoint, Configuration.WaypointColor.Waypoint);
+            case Team -> getWaypointColor(waypoint, Configuration.WaypointColor.Team);
             case Black -> 0xFF000000;
         };
     }
 
-    private static void displayName(GuiGraphics graphics, Minecraft client, String name, int iconSize, WaypointState.RenderState state) {
+    private void displayName(GuiGraphics graphics, Minecraft client, String name, int iconSize, WaypointState.RenderState state) {
         int width = client.font.width(name);
         int lineHeight = client.font.lineHeight;
         int marginX = 6, marginY = 4;
@@ -71,42 +119,5 @@ public class WaypointRenderer {
         }
 
         graphics.drawString(client.font, name, x, y, state.setAlpha(0xFFFFFFFF));
-    }
-
-    public static void draw(GuiGraphics graphics, Minecraft client, Entity camera, TrackedWaypoint waypoint, Configuration config, float angle, WaypointState.RenderState state) {
-        UUID uuid = waypoint.id().left().orElse(null);
-        PlayerInfo player = uuid != null ? client.getConnection().getPlayerInfo(uuid) : null;
-        boolean renderPlayerFace = config.renderPlayerFace.enabled && uuid != null;
-        float distance = Mth.sqrt((float) waypoint.distanceSquared(camera));
-        int size = renderPlayerFace ? getIconSize(distance) : DOT_SIZE;
-
-        if (renderPlayerFace) {
-            PlayerSkin skin = player != null ? player.getSkin() : DefaultPlayerSkin.get(uuid);
-            int color = getOutlineColor(client, waypoint, config.renderPlayerFace.color);
-            int outlineSize = size + OUTLINE * 2;
-
-            graphics.fill(-outlineSize / 2, -size / 2, outlineSize / 2, size / 2, state.setAlpha(color));
-            graphics.fill(-size / 2, -outlineSize / 2, size / 2, outlineSize / 2, state.setAlpha(color));
-            PlayerFaceRenderer.draw(graphics, skin, -size / 2, -size / 2, size, state.setAlpha(0xFFFFFFFF));
-        } else {
-            Waypoint.Icon icon = waypoint.icon();
-            WaypointStyle style = client.getWaypointStyles().get(icon.style);
-            int color = getWaypointColor(client, waypoint, config.color);
-
-            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, style.sprite(distance), -size / 2, -size / 2, size, size, state.setAlpha(color));
-        }
-
-        if (player != null) {
-            boolean visible = switch (config.displayNames) {
-                case PlayerList -> client.options.keyPlayerList.isDown();
-                case Focal -> Math.abs(angle) < 15.0f;
-                case Always -> true;
-                default -> false;
-            };
-
-            if (visible) {
-                displayName(graphics, client, player.getProfile().name(), size, state);
-            }
-        }
     }
 }

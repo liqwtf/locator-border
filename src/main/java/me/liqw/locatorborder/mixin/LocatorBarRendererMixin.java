@@ -41,7 +41,8 @@ public abstract class LocatorBarRendererMixin {
             float angle = (float) waypoint.yawAngleToCamera(level, camera, tickSupplier);
 
             WaypointState.project(graphics, angle, config, (g, state) -> {
-                WaypointRenderer.draw(g, this.minecraft, cameraEntity, waypoint, config, angle, state);
+                WaypointRenderer renderer = new WaypointRenderer(g, this.minecraft, config, state);
+                renderer.draw(cameraEntity, waypoint, angle);
             });
         });
     }
