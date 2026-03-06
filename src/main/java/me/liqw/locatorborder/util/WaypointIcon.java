@@ -65,8 +65,8 @@ public class WaypointIcon {
 
             boolean visible = switch (config.displayNames) {
                 case Hover -> state.isHovered(mouseX, mouseY, renderPlayerFace ? getIconSize(distance) : BASE_DOT_SIZE);
-                case PlayerList -> client.options.keyPlayerList.isDown();
                 case Focal -> Math.abs(angle) < FOCAL_ANGLE_THRESHOLD;
+                case PlayerList -> client.options.keyPlayerList.isDown();
                 case Always -> true;
                 default -> false;
             };

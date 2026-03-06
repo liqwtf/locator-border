@@ -15,7 +15,7 @@ public class Configuration implements ConfigData {
     }
 
     public enum DisplayNames {
-        Never, Hover, Focal, PlayerList, Always;
+        Hover, Focal, PlayerList, Always, Never;
 
         public String toString() {
             return this.name().replace("PlayerList", "Player List");
@@ -30,7 +30,7 @@ public class Configuration implements ConfigData {
     public WaypointColor color = WaypointColor.Waypoint;
     @ConfigEntry.Gui.Tooltip
     @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
-    public DisplayNames displayNames = DisplayNames.Never;
+    public DisplayNames displayNames = DisplayNames.Hover;
     @ConfigEntry.Gui.CollapsibleObject(startExpanded = true)
     public RenderPlayerFace renderPlayerFace = new RenderPlayerFace();
 
