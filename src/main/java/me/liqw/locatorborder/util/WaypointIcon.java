@@ -118,8 +118,17 @@ public class WaypointIcon {
         int x, y;
 
         if (Math.abs(directionY) > Math.abs(directionX)) {
-            x = -width / 2;
-            y = (directionY > 0) ? (-iconSize / 2 - lineHeight - marginY) : (iconSize / 2 + marginY);
+            int centeredX = -width / 2;
+            float screenLeft  = state.x() + centeredX;
+            float screenRight = state.x() + centeredX + width;
+
+            if (screenLeft < 0 || screenRight > graphics.guiWidth()) {
+                x = screenLeft < 0 ? (iconSize / 2 + marginX) : (-iconSize / 2 - width - marginX);
+                y = -lineHeight / 2;
+            } else {
+                x = centeredX;
+                y = (directionY > 0) ? (-iconSize / 2 - lineHeight - marginY) : (iconSize / 2 + marginY);
+            }
         } else {
             x = (directionX > 0) ? (-iconSize / 2 - width - marginX) : (iconSize / 2 + marginX);
             y = -lineHeight / 2;
