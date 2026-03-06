@@ -15,7 +15,7 @@ public class Configuration implements ConfigData {
     }
 
     public enum DisplayNames {
-        Always, Never, Focal, PlayerList;
+        Never, Hover, Focal, PlayerList, Always;
 
         public String toString() {
             return this.name().replace("PlayerList", "Player List");

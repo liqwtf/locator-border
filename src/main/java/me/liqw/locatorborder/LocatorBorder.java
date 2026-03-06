@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 public class LocatorBorder implements ClientModInitializer {
 	public static final String MOD_ID = "locator-border";
-	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+//	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	@Override
 	public void onInitializeClient() {

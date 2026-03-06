@@ -1,5 +1,6 @@
 package me.liqw.locatorborder.util;
 
+import com.mojang.blaze3d.platform.Window;
 import me.liqw.locatorborder.config.Configuration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -17,33 +18,34 @@ import net.minecraft.world.waypoints.Waypoint;
 
 import java.util.UUID;
 
-public class WaypointRenderer {
-    private static final int DOT_SIZE = 9;
-    private static final int OUTLINE = 1;
+public class WaypointIcon {
+    private static final int BASE_DOT_SIZE = 9;
+    private static final int FACE_OUTLINE_PX = 1;
+    private static final float FOCAL_ANGLE_THRESHOLD = 15.0f;
 
     private final GuiGraphics graphics;
     private final Minecraft client;
     private final Configuration config;
-    private final WaypointState.RenderState state;
+    private final ScreenBounds.RenderState state;
 
-    public WaypointRenderer(GuiGraphics graphics, Minecraft client, Configuration config, WaypointState.RenderState state) {
+    public WaypointIcon(GuiGraphics graphics, Minecraft client, Configuration config, ScreenBounds.RenderState state) {
         this.graphics = graphics;
         this.client = client;
         this.config = config;
         this.state = state;
     }
 
-    public void draw(Entity cameraEntity, TrackedWaypoint waypoint, float angle) {
+    public void render(Entity cameraEntity, TrackedWaypoint waypoint, float angle) {
         UUID uuid = waypoint.id().left().orElse(null);
         PlayerInfo player = uuid != null ? client.getConnection().getPlayerInfo(uuid) : null;
         boolean renderPlayerFace = config.renderPlayerFace.enabled && uuid != null;
         float distance = Mth.sqrt((float) waypoint.distanceSquared(cameraEntity));
-        int size = renderPlayerFace ? getIconSize(distance) : DOT_SIZE;
+        int size = renderPlayerFace ? getIconSize(distance) : BASE_DOT_SIZE;
 
         if (renderPlayerFace) {
             PlayerSkin skin = player != null ? player.getSkin() : DefaultPlayerSkin.get(uuid);
             int color = getOutlineColor(waypoint, config.renderPlayerFace.color);
-            int outlineSize = size + OUTLINE * 2;
+            int outlineSize = size + FACE_OUTLINE_PX * 2;
 
             graphics.fill(-outlineSize / 2, -size / 2, outlineSize / 2, size / 2, state.setAlpha(color));
             graphics.fill(-size / 2, -outlineSize / 2, size / 2, outlineSize / 2, state.setAlpha(color));
@@ -57,9 +59,14 @@ public class WaypointRenderer {
         }
 
         if (player != null) {
+            Window window = client.getWindow();
+            int mouseX = Mth.floor(client.mouseHandler.getScaledXPos(window));
+            int mouseY = Mth.floor(client.mouseHandler.getScaledYPos(window));
+
             boolean visible = switch (config.displayNames) {
+                case Hover -> state.isHovered(mouseX, mouseY, renderPlayerFace ? getIconSize(distance) : BASE_DOT_SIZE);
                 case PlayerList -> client.options.keyPlayerList.isDown();
-                case Focal -> Math.abs(angle) < 15.0f;
+                case Focal -> Math.abs(angle) < FOCAL_ANGLE_THRESHOLD;
                 case Always -> true;
                 default -> false;
             };
@@ -100,7 +107,7 @@ public class WaypointRenderer {
         };
     }
 
-    private void displayName(GuiGraphics graphics, Minecraft client, String name, int iconSize, WaypointState.RenderState state) {
+    private void displayName(GuiGraphics graphics, Minecraft client, String name, int iconSize, ScreenBounds.RenderState state) {
         int width = client.font.width(name);
         int lineHeight = client.font.lineHeight;
         int marginX = 6, marginY = 4;

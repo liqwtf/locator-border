@@ -2,8 +2,8 @@ package me.liqw.locatorborder.mixin;
 
 import me.liqw.locatorborder.LocatorBorder;
 import me.liqw.locatorborder.config.Configuration;
-import me.liqw.locatorborder.util.WaypointState;
-import me.liqw.locatorborder.util.WaypointRenderer;
+import me.liqw.locatorborder.util.ScreenBounds;
+import me.liqw.locatorborder.util.WaypointIcon;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -40,9 +40,9 @@ public abstract class LocatorBarRendererMixin {
 
             float angle = (float) waypoint.yawAngleToCamera(level, camera, tickSupplier);
 
-            WaypointState.project(graphics, angle, config, (g, state) -> {
-                WaypointRenderer renderer = new WaypointRenderer(g, this.minecraft, config, state);
-                renderer.draw(cameraEntity, waypoint, angle);
+            ScreenBounds.project(graphics, angle, config, (g, state) -> {
+                WaypointIcon icon = new WaypointIcon(g, this.minecraft, config, state);
+                icon.render(cameraEntity, waypoint, angle);
             });
         });
     }

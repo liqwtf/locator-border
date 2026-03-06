@@ -3,7 +3,7 @@ package me.liqw.locatorborder.mixin;
 import me.liqw.locatorborder.LocatorBorder;
 import me.liqw.locatorborder.config.Configuration;
 import me.liqw.locatorborder.util.CompassPoints;
-import me.liqw.locatorborder.util.WaypointState;
+import me.liqw.locatorborder.util.ScreenBounds;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -49,7 +49,7 @@ public abstract class GuiMixin {
         for (CompassPoints.Point point : CompassPoints.POINTS) {
             if (point.isIntercardinal() && !config.intercardinal) continue;
 
-            WaypointState.project(graphics, point.angle() - yaw, config, (g, state) -> {
+            ScreenBounds.project(graphics, point.angle() - yaw, config, (g, state) -> {
                 int color = state.setAlpha(point.getColor());
 
                 g.drawCenteredString(this.minecraft.font, point.label(), 0, -this.minecraft.font.lineHeight / 2, color);
