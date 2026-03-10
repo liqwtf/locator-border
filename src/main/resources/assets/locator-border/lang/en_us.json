@@ -4,8 +4,6 @@
   "text.autoconfig.locator_border.category.default": "General",
   "text.autoconfig.locator_border.option.margin": "Screen Margin",
   "text.autoconfig.locator_border.option.margin.@Tooltip": "Distance between waypoints and the edge of the screen",
-  "text.autoconfig.locator_border.option.color": "Waypoint Color",
-  "text.autoconfig.locator_border.option.color.@Tooltip": "Decides the color of the waypoint",
   "text.autoconfig.locator_border.option.displayNames": "Display Names",
   "text.autoconfig.locator_border.option.displayNames.@Tooltip": "Show usernames next to waypoints",
 

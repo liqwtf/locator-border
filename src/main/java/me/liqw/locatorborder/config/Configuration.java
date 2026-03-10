@@ -6,14 +6,6 @@ import me.shedaniel.autoconfig.annotation.ConfigEntry;
 
 @Config(name = "locator_border")
 public class Configuration implements ConfigData {
-    public enum WaypointColor {
-        Waypoint, Team,
-    }
-
-    public enum OutlineColor {
-        Waypoint, Team, Black,
-    }
-
     public enum DisplayNames {
         Hover, Focal, PlayerList, Always, Never;
 
@@ -22,12 +14,13 @@ public class Configuration implements ConfigData {
         }
     }
 
+    public enum OutlineColor {
+        Waypoint, Team, Black,
+    }
+
     @ConfigEntry.Gui.Tooltip
     @ConfigEntry.BoundedDiscrete(min = 0, max = 16)
     public int margin = 4;
-    @ConfigEntry.Gui.Tooltip
-    @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
-    public WaypointColor color = WaypointColor.Waypoint;
     @ConfigEntry.Gui.Tooltip
     @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
     public DisplayNames displayNames = DisplayNames.Hover;

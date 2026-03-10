@@ -53,7 +53,7 @@ public class WaypointIcon {
         } else {
             Waypoint.Icon icon = waypoint.icon();
             WaypointStyle style = client.getWaypointStyles().get(icon.style);
-            int color = getWaypointColor(waypoint, config.color);
+            int color = getWaypointColor(waypoint);
 
             graphics.blitSprite(RenderPipelines.GUI_TEXTURED, style.sprite(distance), -size / 2, -size / 2, size, size, state.setAlpha(color));
         }
@@ -83,26 +83,23 @@ public class WaypointIcon {
         return 8;
     }
 
-    private int getWaypointColor(TrackedWaypoint waypoint, Configuration.WaypointColor source) {
+    private int getWaypointColor(TrackedWaypoint waypoint) {
+        return waypoint.icon().color.orElseGet(() ->
+                waypoint.id().map(
+                        uuid -> ARGB.setBrightness(ARGB.color(255, uuid.hashCode()), 0.9F),
+                        string -> ARGB.setBrightness(ARGB.color(255, string.hashCode()), 0.9F)
+                ));
+    }
+
+    private int getOutlineColor(TrackedWaypoint waypoint, Configuration.OutlineColor source) {
         return switch (source) {
-            case Waypoint -> waypoint.icon().color.orElseGet(() ->
-                    waypoint.id().map(
-                            uuid -> ARGB.setBrightness(ARGB.color(255, uuid.hashCode()), 0.9F),
-                            string -> ARGB.setBrightness(ARGB.color(255, string.hashCode()), 0.9F)
-                    ));
+            case Waypoint -> getWaypointColor(waypoint);
             case Team -> waypoint.id().left()
                     .map(client.getConnection()::getPlayerInfo)
                     .map(info -> client.level.getScoreboard().getPlayersTeam(info.getProfile().name()))
                     .map(team -> team.getColor().getColor())
                     .map(color -> 0xFF000000 | color)
                     .orElse(0xFFFFFFFF);
-        };
-    }
-
-    private int getOutlineColor(TrackedWaypoint waypoint, Configuration.OutlineColor source) {
-        return switch (source) {
-            case Waypoint -> getWaypointColor(waypoint, Configuration.WaypointColor.Waypoint);
-            case Team -> getWaypointColor(waypoint, Configuration.WaypointColor.Team);
             case Black -> 0xFF000000;
         };
     }
