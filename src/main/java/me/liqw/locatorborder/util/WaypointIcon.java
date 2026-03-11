@@ -83,7 +83,29 @@ public class WaypointIcon {
         return 8;
     }
 
+    private int getOverrideWaypointColor(TrackedWaypoint waypoint) {
+        String name = waypoint.id().left()
+                .map(client.getConnection()::getPlayerInfo)
+                .map(info -> info.getProfile().name())
+                .orElse(null);
+
+        if (name != null) {
+            for (Configuration.Overrides override : config.overrides) {
+                if (override.name.equalsIgnoreCase(name)) {
+                    return override.color;
+                }
+            }
+        }
+
+        return -1;
+    }
+
     private int getWaypointColor(TrackedWaypoint waypoint) {
+        int overrideColor = getOverrideWaypointColor(waypoint);
+        if (overrideColor != -1) {
+            return overrideColor;
+        }
+
         return waypoint.icon().color.orElseGet(() ->
                 waypoint.id().map(
                         uuid -> ARGB.setBrightness(ARGB.color(255, uuid.hashCode()), 0.9F),
@@ -92,6 +114,11 @@ public class WaypointIcon {
     }
 
     private int getOutlineColor(TrackedWaypoint waypoint, Configuration.OutlineColor source) {
+        int overrideColor = getOverrideWaypointColor(waypoint);
+        if (overrideColor != -1) {
+            return overrideColor;
+        }
+
         return switch (source) {
             case Waypoint -> getWaypointColor(waypoint);
             case Team -> waypoint.id().left()

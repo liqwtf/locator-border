@@ -1,21 +1,27 @@
 {
-  "text.autoconfig.locator_border.title": "Locator Border Configuration",
+  "text.autoconfig.locator-border.title": "Locator Border Configuration",
 
-  "text.autoconfig.locator_border.category.default": "General",
-  "text.autoconfig.locator_border.option.margin": "Screen Margin",
-  "text.autoconfig.locator_border.option.margin.@Tooltip": "Distance between waypoints and the edge of the screen",
-  "text.autoconfig.locator_border.option.displayNames": "Display Names",
-  "text.autoconfig.locator_border.option.displayNames.@Tooltip": "Show usernames next to waypoints",
+  "text.autoconfig.locator-border.category.default": "General",
+  "text.autoconfig.locator-border.option.margin": "Screen Margin",
+  "text.autoconfig.locator-border.option.margin.@Tooltip": "Distance between waypoints and the edge of the screen",
+  "text.autoconfig.locator-border.option.displayNames": "Display Names",
+  "text.autoconfig.locator-border.option.displayNames.@Tooltip": "Show usernames next to waypoints",
 
-  "text.autoconfig.locator_border.option.renderPlayerFace": "Render Player Face",
-  "text.autoconfig.locator_border.option.renderPlayerFace.enabled": "Enabled",
-  "text.autoconfig.locator_border.option.renderPlayerFace.enabled.@Tooltip": "Render waypoint icons as player heads",
-  "text.autoconfig.locator_border.option.renderPlayerFace.distanceScale": "Scale With Distance",
-  "text.autoconfig.locator_border.option.renderPlayerFace.distanceScale.@Tooltip": "Whether to scale player heads with distance",
-  "text.autoconfig.locator_border.option.renderPlayerFace.color": "Outline Color",
-  "text.autoconfig.locator_border.option.renderPlayerFace.color.@Tooltip": "Decides the color of the outline",
+  "text.autoconfig.locator-border.option.renderPlayerFace": "Render Player Face",
+  "text.autoconfig.locator-border.option.renderPlayerFace.enabled": "Enabled",
+  "text.autoconfig.locator-border.option.renderPlayerFace.enabled.@Tooltip": "Render waypoint icons as player heads",
+  "text.autoconfig.locator-border.option.renderPlayerFace.distanceScale": "Scale With Distance",
+  "text.autoconfig.locator-border.option.renderPlayerFace.distanceScale.@Tooltip": "Whether to scale player heads with distance",
+  "text.autoconfig.locator-border.option.renderPlayerFace.color": "Outline Color",
+  "text.autoconfig.locator-border.option.renderPlayerFace.color.@Tooltip": "Decides the color of the outline",
 
-  "text.autoconfig.locator_border.category.directions": "Cardinal Directions",
-  "text.autoconfig.locator_border.option.cardinalDirections": "Show Cardinal Directions",
-  "text.autoconfig.locator_border.option.intercardinal": "+ Intercardinal"
+  "text.autoconfig.locator-border.category.overrides": "Waypoint Overrides",
+  "text.autoconfig.locator-border.option.overrides": "Override Default Settings",
+  "text.autoconfig.locator-border.option.Overrides": "Player Overrides",
+  "text.autoconfig.locator-border.option.Overrides.name": "Name",
+  "text.autoconfig.locator-border.option.Overrides.color": "Waypoint Color",
+
+  "text.autoconfig.locator-border.category.directions": "Cardinal Directions",
+  "text.autoconfig.locator-border.option.cardinalDirections": "Show Cardinal Directions",
+  "text.autoconfig.locator-border.option.intercardinal": "+ Intercardinal"
 }

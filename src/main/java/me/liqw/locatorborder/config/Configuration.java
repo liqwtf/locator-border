@@ -1,10 +1,14 @@
 package me.liqw.locatorborder.config;
 
+import me.liqw.locatorborder.LocatorBorder;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 
-@Config(name = "locator_border")
+import java.util.ArrayList;
+import java.util.List;
+
+@Config(name = LocatorBorder.MOD_ID)
 public class Configuration implements ConfigData {
     public enum DisplayNames {
         Hover, Focal, PlayerList, Always, Never;
@@ -27,6 +31,9 @@ public class Configuration implements ConfigData {
     @ConfigEntry.Gui.CollapsibleObject(startExpanded = true)
     public RenderPlayerFace renderPlayerFace = new RenderPlayerFace();
 
+    @ConfigEntry.Category("overrides")
+    public List<Overrides> overrides = new ArrayList<>();
+
     @ConfigEntry.Category("directions")
     public boolean cardinalDirections = false;
     @ConfigEntry.Category("directions")
@@ -39,4 +46,11 @@ public class Configuration implements ConfigData {
         @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
         public OutlineColor color = OutlineColor.Black;
     }
+
+    public static class Overrides {
+        public String name = "";
+        @ConfigEntry.ColorPicker
+        public int color = 0xFFFFFF;
+    }
+
 }
