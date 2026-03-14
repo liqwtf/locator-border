@@ -1,23 +1,19 @@
 package me.liqw.locatorborder;
 
-import me.liqw.locatorborder.config.Configuration;
+import me.liqw.locatorborder.config.LocatorBorderConfig;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class LocatorBorder implements ClientModInitializer {
 	public static final String MOD_ID = "locator-border";
-//	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	@Override
 	public void onInitializeClient() {
-		AutoConfig.register(Configuration.class, GsonConfigSerializer::new);
+		AutoConfig.register(LocatorBorderConfig.class, GsonConfigSerializer::new);
 	}
 
-	public static Configuration getConfig() {
-		return AutoConfig.getConfigHolder(Configuration.class).getConfig();
+	public static LocatorBorderConfig getConfig() {
+		return AutoConfig.getConfigHolder(LocatorBorderConfig.class).getConfig();
 	}
 }

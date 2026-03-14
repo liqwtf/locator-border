@@ -1,7 +1,7 @@
 package me.liqw.locatorborder.mixin;
 
 import me.liqw.locatorborder.LocatorBorder;
-import me.liqw.locatorborder.config.Configuration;
+import me.liqw.locatorborder.config.LocatorBorderConfig;
 import me.liqw.locatorborder.util.ScreenBounds;
 import me.liqw.locatorborder.util.WaypointIcon;
 import net.minecraft.client.Camera;
@@ -23,13 +23,16 @@ public abstract class LocatorBarRendererMixin {
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void onRender(GuiGraphics graphics, DeltaTracker delta, CallbackInfo ci) {
+        LocatorBorderConfig config = LocatorBorder.getConfig();
+
+        if (!config.enabled) return;
+
         ci.cancel();
 
         Entity cameraEntity = this.minecraft.getCameraEntity();
         if (cameraEntity == null || this.minecraft.player == null) return;
 
         Level level = cameraEntity.level();
-        Configuration config = LocatorBorder.getConfig();
         Camera camera = this.minecraft.gameRenderer.getMainCamera();
 
         boolean isFrozen = level.tickRateManager().isEntityFrozen(cameraEntity);
@@ -49,6 +52,6 @@ public abstract class LocatorBarRendererMixin {
 
     @Inject(method = "renderBackground", at = @At("HEAD"), cancellable = true)
     public void onRenderBackground(GuiGraphics graphics, DeltaTracker delta, CallbackInfo ci) {
-        ci.cancel();
+        if (LocatorBorder.getConfig().enabled) ci.cancel();
     }
 }

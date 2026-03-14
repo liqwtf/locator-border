@@ -1,9 +1,13 @@
 {
   "text.autoconfig.locator-border.title": "Locator Border Configuration",
 
-  "text.autoconfig.locator-border.category.default": "General",
+  "text.autoconfig.locator-border.category.default": "Rendering",
+  "text.autoconfig.locator-border.option.enabled": "Enabled",
+  "text.autoconfig.locator-border.option.enabled.@Tooltip": "Enable all the mods features",
   "text.autoconfig.locator-border.option.margin": "Screen Margin",
   "text.autoconfig.locator-border.option.margin.@Tooltip": "Distance between waypoints and the edge of the screen",
+  "text.autoconfig.locator-border.option.color": "Waypoint Color",
+  "text.autoconfig.locator-border.option.color.@Tooltip": "Decides the color of the waypoint",
   "text.autoconfig.locator-border.option.displayNames": "Display Names",
   "text.autoconfig.locator-border.option.displayNames.@Tooltip": "Show usernames next to waypoints",
 
@@ -15,13 +19,16 @@
   "text.autoconfig.locator-border.option.renderPlayerFace.color": "Outline Color",
   "text.autoconfig.locator-border.option.renderPlayerFace.color.@Tooltip": "Decides the color of the outline",
 
-  "text.autoconfig.locator-border.category.overrides": "Waypoint Overrides",
-  "text.autoconfig.locator-border.option.overrides": "Override Default Settings",
-  "text.autoconfig.locator-border.option.Overrides": "Player Overrides",
-  "text.autoconfig.locator-border.option.Overrides.name": "Name",
-  "text.autoconfig.locator-border.option.Overrides.color": "Waypoint Color",
+  "text.autoconfig.locator-border.category.overrides": "Overrides",
+  "text.autoconfig.locator-border.option.overrides": "Player Specific Colors",
+  "text.autoconfig.locator-border.option.Override": "Override",
+  "text.autoconfig.locator-border.option.Override.name": "Player Name",
+  "text.autoconfig.locator-border.option.Override.color": "Waypoint Color",
 
-  "text.autoconfig.locator-border.category.directions": "Cardinal Directions",
-  "text.autoconfig.locator-border.option.cardinalDirections": "Show Cardinal Directions",
-  "text.autoconfig.locator-border.option.intercardinal": "+ Intercardinal"
+  "text.autoconfig.locator-border.category.extras": "Extra Features",
+  "text.autoconfig.locator-border.option.compass": "Cardinal Directions",
+  "text.autoconfig.locator-border.option.compass.enabled": "Enabled",
+  "text.autoconfig.locator-border.option.compass.enabled.@Tooltip": "Render cardinal directions (N, S, E, W)",
+  "text.autoconfig.locator-border.option.compass.intercardinal": "Intercardinal",
+  "text.autoconfig.locator-border.option.compass.intercardinal.@Tooltip": "Render intercardinal directions (NE, SE, SW, NW)"
 }

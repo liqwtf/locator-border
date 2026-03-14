@@ -1,6 +1,6 @@
 package me.liqw.locatorborder.util;
 
-import me.liqw.locatorborder.config.Configuration;
+import me.liqw.locatorborder.config.LocatorBorderConfig;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
 
@@ -31,7 +31,7 @@ public class ScreenBounds {
         return new RenderState(x, y, directionX, directionY, centerX, centerY, alpha);
     }
 
-    public static void project(GuiGraphics graphics, float angle, Configuration config, DrawCallback callback) {
+    public static void project(GuiGraphics graphics, float angle, LocatorBorderConfig config, DrawCallback callback) {
         RenderState state = compute(graphics, angle, config.margin);
 
         if (state.alpha <= 0.0f) return;

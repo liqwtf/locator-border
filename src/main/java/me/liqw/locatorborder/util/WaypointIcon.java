@@ -1,7 +1,7 @@
 package me.liqw.locatorborder.util;
 
 import com.mojang.blaze3d.platform.Window;
-import me.liqw.locatorborder.config.Configuration;
+import me.liqw.locatorborder.config.LocatorBorderConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.PlayerFaceRenderer;
@@ -25,10 +25,10 @@ public class WaypointIcon {
 
     private final GuiGraphics graphics;
     private final Minecraft client;
-    private final Configuration config;
+    private final LocatorBorderConfig config;
     private final ScreenBounds.RenderState state;
 
-    public WaypointIcon(GuiGraphics graphics, Minecraft client, Configuration config, ScreenBounds.RenderState state) {
+    public WaypointIcon(GuiGraphics graphics, Minecraft client, LocatorBorderConfig config, ScreenBounds.RenderState state) {
         this.graphics = graphics;
         this.client = client;
         this.config = config;
@@ -40,7 +40,7 @@ public class WaypointIcon {
         PlayerInfo player = uuid != null ? client.getConnection().getPlayerInfo(uuid) : null;
         boolean renderPlayerFace = config.renderPlayerFace.enabled && uuid != null;
         float distance = Mth.sqrt((float) waypoint.distanceSquared(cameraEntity));
-        int size = renderPlayerFace ? getIconSize(distance) : BASE_DOT_SIZE;
+        int size = renderPlayerFace ? getPlayerFaceSize(distance) : BASE_DOT_SIZE;
 
         if (renderPlayerFace) {
             PlayerSkin skin = player != null ? player.getSkin() : DefaultPlayerSkin.get(uuid);
@@ -53,7 +53,7 @@ public class WaypointIcon {
         } else {
             Waypoint.Icon icon = waypoint.icon();
             WaypointStyle style = client.getWaypointStyles().get(icon.style);
-            int color = getWaypointColor(waypoint);
+            int color = getWaypointColor(waypoint, config.color);
 
             graphics.blitSprite(RenderPipelines.GUI_TEXTURED, style.sprite(distance), -size / 2, -size / 2, size, size, state.setAlpha(color));
         }
@@ -64,7 +64,7 @@ public class WaypointIcon {
             int mouseY = Mth.floor(client.mouseHandler.getScaledYPos(window));
 
             boolean visible = switch (config.displayNames) {
-                case Hover -> state.isHovered(mouseX, mouseY, renderPlayerFace ? getIconSize(distance) : BASE_DOT_SIZE);
+                case Hover -> state.isHovered(mouseX, mouseY, renderPlayerFace ? getPlayerFaceSize(distance) : BASE_DOT_SIZE);
                 case Focal -> Math.abs(angle) < FOCAL_ANGLE_THRESHOLD;
                 case PlayerList -> client.options.keyPlayerList.isDown();
                 case Always -> true;
@@ -77,56 +77,33 @@ public class WaypointIcon {
         }
     }
 
-    private int getIconSize(float distance) {
+    private int getPlayerFaceSize(float distance) {
+        if (!config.renderPlayerFace.distanceScale) return 8;
         if (distance >= WaypointStyle.DEFAULT_FAR_DISTANCE) return 4;
         if (distance >= WaypointStyle.DEFAULT_NEAR_DISTANCE) return 6;
         return 8;
     }
 
-    private int getOverrideWaypointColor(TrackedWaypoint waypoint) {
-        String name = waypoint.id().left()
-                .map(client.getConnection()::getPlayerInfo)
-                .map(info -> info.getProfile().name())
-                .orElse(null);
-
-        if (name != null) {
-            for (Configuration.Overrides override : config.overrides) {
-                if (override.name.equalsIgnoreCase(name)) {
-                    return override.color;
-                }
-            }
-        }
-
-        return -1;
-    }
-
-    private int getWaypointColor(TrackedWaypoint waypoint) {
-        int overrideColor = getOverrideWaypointColor(waypoint);
-        if (overrideColor != -1) {
-            return overrideColor;
-        }
-
-        return waypoint.icon().color.orElseGet(() ->
-                waypoint.id().map(
-                        uuid -> ARGB.setBrightness(ARGB.color(255, uuid.hashCode()), 0.9F),
-                        string -> ARGB.setBrightness(ARGB.color(255, string.hashCode()), 0.9F)
-                ));
-    }
-
-    private int getOutlineColor(TrackedWaypoint waypoint, Configuration.OutlineColor source) {
-        int overrideColor = getOverrideWaypointColor(waypoint);
-        if (overrideColor != -1) {
-            return overrideColor;
-        }
-
+    private int getWaypointColor(TrackedWaypoint waypoint, LocatorBorderConfig.WaypointColor source) {
         return switch (source) {
-            case Waypoint -> getWaypointColor(waypoint);
+            case Waypoint -> waypoint.icon().color.orElseGet(() ->
+                    waypoint.id().map(
+                            uuid -> ARGB.setBrightness(ARGB.color(255, uuid.hashCode()), 0.9F),
+                            string -> ARGB.setBrightness(ARGB.color(255, string.hashCode()), 0.9F)
+                    ));
             case Team -> waypoint.id().left()
                     .map(client.getConnection()::getPlayerInfo)
                     .map(info -> client.level.getScoreboard().getPlayersTeam(info.getProfile().name()))
                     .map(team -> team.getColor().getColor())
                     .map(color -> 0xFF000000 | color)
                     .orElse(0xFFFFFFFF);
+        };
+    }
+
+    private int getOutlineColor(TrackedWaypoint waypoint, LocatorBorderConfig.OutlineColor source) {
+        return switch (source) {
+            case Waypoint -> getWaypointColor(waypoint, LocatorBorderConfig.WaypointColor.Waypoint);
+            case Team -> getWaypointColor(waypoint, LocatorBorderConfig.WaypointColor.Team);
             case Black -> 0xFF000000;
         };
     }

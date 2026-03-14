@@ -5,11 +5,10 @@ import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Config(name = LocatorBorder.MOD_ID)
-public class Configuration implements ConfigData {
+public class LocatorBorderConfig implements ConfigData {
     public enum DisplayNames {
         Hover, Focal, PlayerList, Always, Never;
 
@@ -18,13 +17,22 @@ public class Configuration implements ConfigData {
         }
     }
 
+    public enum WaypointColor {
+        Waypoint, Team,
+    }
+
     public enum OutlineColor {
         Waypoint, Team, Black,
     }
 
     @ConfigEntry.Gui.Tooltip
+    public boolean enabled = true;
+    @ConfigEntry.Gui.Tooltip
     @ConfigEntry.BoundedDiscrete(min = 0, max = 16)
     public int margin = 4;
+    @ConfigEntry.Gui.Tooltip
+    @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
+    public WaypointColor color = WaypointColor.Waypoint;
     @ConfigEntry.Gui.Tooltip
     @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
     public DisplayNames displayNames = DisplayNames.Hover;
@@ -32,25 +40,39 @@ public class Configuration implements ConfigData {
     public RenderPlayerFace renderPlayerFace = new RenderPlayerFace();
 
     @ConfigEntry.Category("overrides")
-    public List<Overrides> overrides = new ArrayList<>();
+    public List<Override> overrides = List.of(new Override("liqw", 0x6395EE));
 
-    @ConfigEntry.Category("directions")
-    public boolean cardinalDirections = false;
-    @ConfigEntry.Category("directions")
-    public boolean intercardinal = false;
+    @ConfigEntry.Category("extras")
+    @ConfigEntry.Gui.CollapsibleObject
+    public CardinalDirections compass = new CardinalDirections();
 
     public static class RenderPlayerFace {
         @ConfigEntry.Gui.Tooltip
         public boolean enabled = false;
         @ConfigEntry.Gui.Tooltip
+        public boolean distanceScale = true;
+        @ConfigEntry.Gui.Tooltip
         @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
         public OutlineColor color = OutlineColor.Black;
     }
 
-    public static class Overrides {
-        public String name = "";
+    public static class CardinalDirections {
+        @ConfigEntry.Gui.Tooltip
+        public boolean enabled = false;
+        @ConfigEntry.Gui.Tooltip
+        public boolean intercardinal = false;
+    }
+
+    public static class Override {
+        public Override() {}
+
+        public Override(String name, int color) {
+            this.name = name;
+            this.color = color;
+        }
+
+        public String name;
         @ConfigEntry.ColorPicker
         public int color = 0xFFFFFF;
     }
-
 }

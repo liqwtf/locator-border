@@ -1,7 +1,7 @@
 package me.liqw.locatorborder.mixin;
 
 import me.liqw.locatorborder.LocatorBorder;
-import me.liqw.locatorborder.config.Configuration;
+import me.liqw.locatorborder.config.LocatorBorderConfig;
 import me.liqw.locatorborder.util.CompassPoints;
 import me.liqw.locatorborder.util.ScreenBounds;
 import net.minecraft.client.DeltaTracker;
@@ -21,25 +21,32 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Gui.class)
 public abstract class GuiMixin {
     @Shadow @Final private Minecraft minecraft;
+    private LocatorBarRenderer renderer;
 
     @ModifyVariable(method = "nextContextualInfoState", at = @At("STORE"), ordinal = 0)
     private boolean forceLocatorStateOff(boolean original) {
-        return false;
+        if (LocatorBorder.getConfig().enabled) return false;
+        return original;
     }
 
     @Inject(method = "renderHotbarAndDecorations", at = @At("TAIL"))
     private void renderLocatorBar(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
-        if (this.minecraft.player != null && this.minecraft.player.connection.getWaypointManager().hasWaypoints()) {
-            LocatorBarRenderer renderer = new LocatorBarRenderer(this.minecraft);
-            renderer.render(guiGraphics, deltaTracker);
+        LocatorBorderConfig config = LocatorBorder.getConfig();
+
+        if (config.enabled && this.minecraft.player != null && this.minecraft.player.connection.getWaypointManager().hasWaypoints()) {
+            if (this.renderer == null) {
+                this.renderer = new LocatorBarRenderer(this.minecraft);
+            }
+
+            this.renderer.render(guiGraphics, deltaTracker);
         }
     }
 
     @Inject(method = "render", at = @At("TAIL"))
     private void renderCompass(GuiGraphics graphics, DeltaTracker delta, CallbackInfo ci) {
-        Configuration config = LocatorBorder.getConfig();
+        LocatorBorderConfig config = LocatorBorder.getConfig();
 
-        if (this.minecraft.options.hideGui || !config.cardinalDirections) return;
+        if (!config.enabled || this.minecraft.options.hideGui || !config.compass.enabled) return;
 
         Entity cameraEntity = this.minecraft.getCameraEntity();
         if (cameraEntity == null) return;
@@ -47,7 +54,7 @@ public abstract class GuiMixin {
         float yaw = cameraEntity.getYRot();
 
         for (CompassPoints.Point point : CompassPoints.POINTS) {
-            if (point.isIntercardinal() && !config.intercardinal) continue;
+            if (point.isIntercardinal() && !config.compass.intercardinal) continue;
 
             ScreenBounds.project(graphics, point.angle() - yaw, config, (g, state) -> {
                 int color = state.setAlpha(point.getColor());
