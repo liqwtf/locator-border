@@ -26,7 +26,7 @@ public class ScreenBounds {
         float x = centerX + (directionX / hitScale) * boundsX;
         float y = centerY + (directionY / hitScale) * boundsY;
 
-        float alpha = y > centerY ? Mth.clamp((Math.abs(x - centerX) - HOTBAR_WIDTH / 2) / FADE_BUFFER, 0.0f, 1.0f) : 1.0f;
+        float alpha = y > centerY ? Mth.clamp((Math.abs(x - centerX) - HOTBAR_WIDTH / 2.0f) / FADE_BUFFER, 0.0f, 1.0f) : 1.0f;
 
         return new RenderState(x, y, directionX, directionY, centerX, centerY, alpha);
     }

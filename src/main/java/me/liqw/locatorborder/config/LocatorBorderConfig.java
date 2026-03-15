@@ -5,7 +5,7 @@ import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 
-import java.util.List;
+import java.util.*;
 
 @Config(name = LocatorBorder.MOD_ID)
 public class LocatorBorderConfig implements ConfigData {
@@ -39,12 +39,28 @@ public class LocatorBorderConfig implements ConfigData {
     @ConfigEntry.Gui.CollapsibleObject(startExpanded = true)
     public RenderPlayerFace renderPlayerFace = new RenderPlayerFace();
 
+    @ConfigEntry.Gui.Excluded
+    public transient Map<String, PlayerSpecificConfig.Override> overrideCache = new HashMap<>();
     @ConfigEntry.Category("overrides")
-    public List<Override> overrides = List.of(new Override("liqw", 0x6395EE));
+    public List<PlayerSpecificConfig> overrides = new ArrayList<>(List.of(
+            new PlayerSpecificConfig("liqw", new PlayerSpecificConfig.Override(0x6395EE))
+    ));
 
     @ConfigEntry.Category("extras")
     @ConfigEntry.Gui.CollapsibleObject
     public CardinalDirections compass = new CardinalDirections();
+
+    @Override
+    public void validatePostLoad() {
+        overrideCache.clear();
+        if (overrides == null) return;
+
+        overrides.removeIf(entry -> entry.name == null || entry.name.isBlank());
+
+        for (PlayerSpecificConfig entry : overrides) {
+            overrideCache.put(entry.name.toLowerCase(), entry.override);
+        }
+    }
 
     public static class RenderPlayerFace {
         @ConfigEntry.Gui.Tooltip
@@ -63,16 +79,28 @@ public class LocatorBorderConfig implements ConfigData {
         public boolean intercardinal = false;
     }
 
-    public static class Override {
-        public Override() {}
+    public static class PlayerSpecificConfig {
+        public String name;
+        @ConfigEntry.Gui.TransitiveObject
+        public Override override = new Override();
 
-        public Override(String name, int color) {
-            this.name = name;
-            this.color = color;
+        public static class Override {
+            @ConfigEntry.ColorPicker
+            public int color = 0xFFFFFF;
+//            @ConfigEntry.BoundedDiscrete(min = 50, max = 400)
+//            public int iconScale = 100;
+
+            public Override() {}
+            public Override(int color) {
+                this.color = color;
+//                this.iconScale = iconScale;
+            }
         }
 
-        public String name;
-        @ConfigEntry.ColorPicker
-        public int color = 0xFFFFFF;
+        public PlayerSpecificConfig() {}
+        public PlayerSpecificConfig(String name, Override override) {
+            this.name = name;
+            this.override = override;
+        }
     }
 }

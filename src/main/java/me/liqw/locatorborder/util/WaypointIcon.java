@@ -16,6 +16,7 @@ import net.minecraft.world.entity.player.PlayerSkin;
 import net.minecraft.world.waypoints.TrackedWaypoint;
 import net.minecraft.world.waypoints.Waypoint;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class WaypointIcon {
@@ -78,13 +79,28 @@ public class WaypointIcon {
     }
 
     private int getPlayerFaceSize(float distance) {
-        if (!config.renderPlayerFace.distanceScale) return 8;
-        if (distance >= WaypointStyle.DEFAULT_FAR_DISTANCE) return 4;
-        if (distance >= WaypointStyle.DEFAULT_NEAR_DISTANCE) return 6;
+        if (config.renderPlayerFace.distanceScale) {
+            if (distance >= WaypointStyle.DEFAULT_FAR_DISTANCE) return 4;
+            if (distance >= WaypointStyle.DEFAULT_NEAR_DISTANCE) return 6;
+        }
         return 8;
     }
 
     private int getWaypointColor(TrackedWaypoint waypoint, LocatorBorderConfig.WaypointColor source) {
+        Optional<UUID> id = waypoint.id().left();
+
+        if (id.isPresent()) {
+            PlayerInfo info = client.getConnection().getPlayerInfo(id.get());
+
+            if (info != null) {
+                String key = info.getProfile().name();
+
+                if (config.overrideCache.containsKey(key)) {
+                    return 0xFF000000 | config.overrideCache.get(key).color;
+                }
+            }
+        }
+
         return switch (source) {
             case Waypoint -> waypoint.icon().color.orElseGet(() ->
                     waypoint.id().map(
@@ -101,6 +117,20 @@ public class WaypointIcon {
     }
 
     private int getOutlineColor(TrackedWaypoint waypoint, LocatorBorderConfig.OutlineColor source) {
+        Optional<UUID> id = waypoint.id().left();
+
+        if (id.isPresent()) {
+            PlayerInfo info = client.getConnection().getPlayerInfo(id.get());
+
+            if (info != null) {
+                String key = info.getProfile().name();
+
+                if (config.overrideCache.containsKey(key)) {
+                    return 0xFF000000 | config.overrideCache.get(key).color;
+                }
+            }
+        }
+
         return switch (source) {
             case Waypoint -> getWaypointColor(waypoint, LocatorBorderConfig.WaypointColor.Waypoint);
             case Team -> getWaypointColor(waypoint, LocatorBorderConfig.WaypointColor.Team);

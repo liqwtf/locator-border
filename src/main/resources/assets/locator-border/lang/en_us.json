@@ -20,10 +20,11 @@
   "text.autoconfig.locator-border.option.renderPlayerFace.color.@Tooltip": "Decides the color of the outline",
 
   "text.autoconfig.locator-border.category.overrides": "Overrides",
-  "text.autoconfig.locator-border.option.overrides": "Player Specific Colors",
-  "text.autoconfig.locator-border.option.Override": "Override",
-  "text.autoconfig.locator-border.option.Override.name": "Player Name",
-  "text.autoconfig.locator-border.option.Override.color": "Waypoint Color",
+  "text.autoconfig.locator-border.option.overrides": "Player Specific Config",
+  "text.autoconfig.locator-border.option.PlayerSpecificConfig": "Override",
+  "text.autoconfig.locator-border.option.PlayerSpecificConfig.name": "Player Name",
+  "text.autoconfig.locator-border.option.PlayerSpecificConfig.override.color": "Waypoint Color",
+  "text.autoconfig.locator-border.option.PlayerSpecificConfig.override.iconScale": "Icon Scale (%)",
 
   "text.autoconfig.locator-border.category.extras": "Extra Features",
   "text.autoconfig.locator-border.option.compass": "Cardinal Directions",
