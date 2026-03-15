@@ -41,15 +41,16 @@ public class WaypointIcon {
         PlayerInfo player = uuid != null ? client.getConnection().getPlayerInfo(uuid) : null;
         boolean renderPlayerFace = config.renderPlayerFace.enabled && uuid != null;
         float distance = Mth.sqrt((float) waypoint.distanceSquared(cameraEntity));
-        int size = renderPlayerFace ? getPlayerFaceSize(distance) : BASE_DOT_SIZE;
+        float scale = getIconScale(player);
+        int size = (int) ((float) (renderPlayerFace ? getPlayerFaceSize(distance) : BASE_DOT_SIZE) * scale);
 
         if (renderPlayerFace) {
             PlayerSkin skin = player != null ? player.getSkin() : DefaultPlayerSkin.get(uuid);
             int color = getOutlineColor(waypoint, config.renderPlayerFace.color);
-            int outlineSize = size + FACE_OUTLINE_PX * 2;
+            int outlineSize = size + Math.max(1, (int) (FACE_OUTLINE_PX * scale)) * 2;
 
-            graphics.fill(-outlineSize / 2, -size / 2, outlineSize / 2, size / 2, state.setAlpha(color));
-            graphics.fill(-size / 2, -outlineSize / 2, size / 2, outlineSize / 2, state.setAlpha(color));
+            graphics.fill(-outlineSize / 2, -size / 2, (-outlineSize / 2) + outlineSize, (-size / 2) + size, state.setAlpha(color));
+            graphics.fill(-size / 2, -outlineSize / 2, (-size / 2) + size, (-outlineSize / 2) + outlineSize, state.setAlpha(color));
             PlayerFaceRenderer.draw(graphics, skin, -size / 2, -size / 2, size, state.setAlpha(0xFFFFFFFF));
         } else {
             Waypoint.Icon icon = waypoint.icon();
@@ -84,6 +85,17 @@ public class WaypointIcon {
             if (distance >= WaypointStyle.DEFAULT_NEAR_DISTANCE) return 6;
         }
         return 8;
+    }
+
+    private float getIconScale(PlayerInfo player) {
+        if (player != null) {
+            String key = player.getProfile().name();
+            if (config.overrideCache.containsKey(key)) {
+                return config.overrideCache.get(key).iconScale / 100.0f;
+            }
+        }
+
+        return 1.0f;
     }
 
     private int getWaypointColor(TrackedWaypoint waypoint, LocatorBorderConfig.WaypointColor source) {

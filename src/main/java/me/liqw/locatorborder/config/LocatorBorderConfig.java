@@ -87,13 +87,12 @@ public class LocatorBorderConfig implements ConfigData {
         public static class Override {
             @ConfigEntry.ColorPicker
             public int color = 0xFFFFFF;
-//            @ConfigEntry.BoundedDiscrete(min = 50, max = 400)
-//            public int iconScale = 100;
+            @ConfigEntry.BoundedDiscrete(min = 50, max = 400)
+            public int iconScale = 100;
 
             public Override() {}
             public Override(int color) {
                 this.color = color;
-//                this.iconScale = iconScale;
             }
         }
 
