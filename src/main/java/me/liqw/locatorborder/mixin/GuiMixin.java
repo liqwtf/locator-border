@@ -56,10 +56,10 @@ public abstract class GuiMixin {
         for (CompassPoints.Point point : CompassPoints.POINTS) {
             if (point.isIntercardinal() && !config.compass.intercardinal) continue;
 
-            ScreenBounds.project(graphics, point.angle() - yaw, config, (g, state) -> {
-                int color = state.setAlpha(point.getColor());
+            ScreenBounds bounds = new ScreenBounds(this.minecraft, graphics, config);
 
-                g.drawCenteredString(this.minecraft.font, point.label(), 0, -this.minecraft.font.lineHeight / 2, color);
+            bounds.project(graphics, point.angle() - yaw, config, (g, state) -> {
+                g.drawCenteredString(this.minecraft.font, point.label(), 0, -this.minecraft.font.lineHeight / 2, state.setAlpha(point.getColor()));
             });
         }
     }

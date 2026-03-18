@@ -46,9 +46,11 @@ public class LocatorBorderConfig implements ConfigData {
             new PlayerSpecificConfig("liqw", new PlayerSpecificConfig.Override(0x6395EE))
     ));
 
-    @ConfigEntry.Category("extras")
+    @ConfigEntry.Category("miscellaneous")
     @ConfigEntry.Gui.CollapsibleObject
     public CardinalDirections compass = new CardinalDirections();
+    @ConfigEntry.Category("miscellaneous")
+    public boolean animations = true;
 
     @Override
     public void validatePostLoad() {

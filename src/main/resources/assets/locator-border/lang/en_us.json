@@ -26,10 +26,11 @@
   "text.autoconfig.locator-border.option.PlayerSpecificConfig.override.color": "Waypoint Color",
   "text.autoconfig.locator-border.option.PlayerSpecificConfig.override.iconScale": "Icon Scale (%)",
 
-  "text.autoconfig.locator-border.category.extras": "Extra Features",
+  "text.autoconfig.locator-border.category.miscellaneous": "Miscellaneous",
   "text.autoconfig.locator-border.option.compass": "Cardinal Directions",
   "text.autoconfig.locator-border.option.compass.enabled": "Enabled",
   "text.autoconfig.locator-border.option.compass.enabled.@Tooltip": "Render cardinal directions (N, S, E, W)",
   "text.autoconfig.locator-border.option.compass.intercardinal": "Intercardinal",
-  "text.autoconfig.locator-border.option.compass.intercardinal.@Tooltip": "Render intercardinal directions (NE, SE, SW, NW)"
+  "text.autoconfig.locator-border.option.compass.intercardinal.@Tooltip": "Render intercardinal directions (NE, SE, SW, NW)",
+  "text.autoconfig.locator-border.option.animations": "Enable Animations"
 }

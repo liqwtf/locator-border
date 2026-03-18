@@ -42,8 +42,9 @@ public abstract class LocatorBarRendererMixin {
             if (waypoint.id().left().filter(uuid -> uuid.equals(cameraEntity.getUUID())).isPresent()) return;
 
             float angle = (float) waypoint.yawAngleToCamera(level, camera, tickSupplier);
+            ScreenBounds bounds = new ScreenBounds(this.minecraft, graphics, config);
 
-            ScreenBounds.project(graphics, angle, config, (g, state) -> {
+            bounds.project(graphics, angle, config, (g, state) -> {
                 WaypointIcon icon = new WaypointIcon(g, this.minecraft, config, state);
                 icon.render(cameraEntity, waypoint, angle);
             });

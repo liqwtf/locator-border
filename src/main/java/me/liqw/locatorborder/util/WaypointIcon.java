@@ -42,7 +42,8 @@ public class WaypointIcon {
         boolean renderPlayerFace = config.renderPlayerFace.enabled && uuid != null;
         float distance = Mth.sqrt((float) waypoint.distanceSquared(cameraEntity));
         float scale = getIconScale(player);
-        int size = (int) ((float) (renderPlayerFace ? getPlayerFaceSize(distance) : BASE_DOT_SIZE) * scale);
+        int size = renderPlayerFace ? getPlayerFaceSize(distance) : BASE_DOT_SIZE;
+        size = (int) ((float) size * scale);
 
         if (renderPlayerFace) {
             PlayerSkin skin = player != null ? player.getSkin() : DefaultPlayerSkin.get(uuid);
@@ -61,12 +62,8 @@ public class WaypointIcon {
         }
 
         if (player != null) {
-            Window window = client.getWindow();
-            int mouseX = Mth.floor(client.mouseHandler.getScaledXPos(window));
-            int mouseY = Mth.floor(client.mouseHandler.getScaledYPos(window));
-
             boolean visible = switch (config.displayNames) {
-                case Hover -> state.isHovered(mouseX, mouseY, renderPlayerFace ? getPlayerFaceSize(distance) : BASE_DOT_SIZE);
+                case Hover -> state.isHovered(size, size);
                 case Focal -> Math.abs(angle) < FOCAL_ANGLE_THRESHOLD;
                 case PlayerList -> client.options.keyPlayerList.isDown();
                 case Always -> true;
