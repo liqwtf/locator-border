@@ -9,20 +9,11 @@ import java.util.*;
 
 @Config(name = LocatorBorder.MOD_ID)
 public class LocatorBorderConfig implements ConfigData {
-    public enum DisplayNames {
-        Hover, Focal, PlayerList, Always, Never;
-
-        public String toString() {
-            return this.name().replace("PlayerList", "Player List");
-        }
-    }
+    @ConfigEntry.Gui.Excluded
+    public transient Map<String, PlayerSpecificConfig.Override> overrideCache = new HashMap<>();
 
     public enum WaypointColor {
         Waypoint, Team,
-    }
-
-    public enum OutlineColor {
-        Waypoint, Team, Black,
     }
 
     @ConfigEntry.Gui.Tooltip
@@ -32,18 +23,15 @@ public class LocatorBorderConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip
     @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
     public WaypointColor color = WaypointColor.Waypoint;
-    @ConfigEntry.Gui.CollapsibleObject(startExpanded = true)
+    @ConfigEntry.Gui.CollapsibleObject
     public RenderPlayerFace renderPlayerFace = new RenderPlayerFace();
-    @ConfigEntry.Gui.CollapsibleObject(startExpanded = true)
+    @ConfigEntry.Gui.CollapsibleObject
     public FocusWaypoint focusWaypoint = new FocusWaypoint();
 
-    @ConfigEntry.Gui.Excluded
-    public transient Map<String, PlayerSpecificConfig.Override> overrideCache = new HashMap<>();
-    @ConfigEntry.Category("overrides")
+    @ConfigEntry.Category("miscellaneous")
     public List<PlayerSpecificConfig> overrides = new ArrayList<>(List.of(
             new PlayerSpecificConfig("liqw", new PlayerSpecificConfig.Override(0x6395EE))
     ));
-
     @ConfigEntry.Category("miscellaneous")
     @ConfigEntry.Gui.CollapsibleObject
     public CardinalDirections compass = new CardinalDirections();
@@ -63,6 +51,10 @@ public class LocatorBorderConfig implements ConfigData {
     }
 
     public static class RenderPlayerFace {
+        public enum OutlineColor {
+            Waypoint, Team, Black,
+        }
+
         @ConfigEntry.Gui.Tooltip
         public boolean enabled = false;
         @ConfigEntry.Gui.Tooltip
@@ -74,7 +66,7 @@ public class LocatorBorderConfig implements ConfigData {
 
     public static class FocusWaypoint {
         public enum Trigger {
-            Hover, Focal, PlayerList;
+            Hover, Focal, PlayerList, None;
 
             public String toString() {
                 return this.name().replaceAll("([a-z])([A-Z])", "$1 $2");
@@ -82,22 +74,19 @@ public class LocatorBorderConfig implements ConfigData {
         }
 
         @ConfigEntry.Gui.Tooltip
-        public boolean enabled = true;
-        @ConfigEntry.Gui.Tooltip
         @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
         public Trigger trigger = Trigger.Hover;
-        @ConfigEntry.Gui.Tooltip
-        public boolean displayName = true;
-        public int inset = 4;
-        @ConfigEntry.BoundedDiscrete(min = 1, max = 2)
         public float scale = 1.2f;
-    }
+        public int inset = 2;
+        @ConfigEntry.Gui.CollapsibleObject
+        public FocusLabels labels = new FocusLabels();
 
-    public static class CardinalDirections {
-        @ConfigEntry.Gui.Tooltip
-        public boolean enabled = false;
-        @ConfigEntry.Gui.Tooltip
-        public boolean intercardinal = false;
+        public static class FocusLabels {
+            @ConfigEntry.Gui.Tooltip
+            public boolean displayName = true;
+            @ConfigEntry.Gui.Tooltip
+            public boolean displayDistance = false;
+        }
     }
 
     public static class PlayerSpecificConfig {
@@ -108,8 +97,7 @@ public class LocatorBorderConfig implements ConfigData {
         public static class Override {
             @ConfigEntry.ColorPicker
             public int color = 0xFFFFFF;
-            @ConfigEntry.BoundedDiscrete(min = 50, max = 400)
-            public float scale = 1.0f;
+            public boolean focused = false;
 
             public Override() {}
             public Override(int color) {
@@ -122,5 +110,12 @@ public class LocatorBorderConfig implements ConfigData {
             this.name = name;
             this.override = override;
         }
+    }
+
+    public static class CardinalDirections {
+        @ConfigEntry.Gui.Tooltip
+        public boolean enabled = false;
+        @ConfigEntry.Gui.Tooltip
+        public boolean intercardinal = false;
     }
 }

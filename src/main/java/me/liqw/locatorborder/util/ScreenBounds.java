@@ -76,10 +76,17 @@ public class ScreenBounds {
 
         Point outer = project(directionX, directionY, config.margin);
 
-        boolean focused = config.focusWaypoint.enabled && switch (config.focusWaypoint.trigger) {
+        boolean alwaysFocused = this.waypoint.id().left()
+                .map(minecraft.getConnection()::getPlayerInfo)
+                .map(info -> config.overrideCache.get(info.getProfile().name().toLowerCase()))
+                .map(o -> o.focused)
+                .orElse(false);
+
+        boolean focused = alwaysFocused || switch (config.focusWaypoint.trigger) {
             case Hover -> isHovering(outer, width, height);
             case Focal -> Math.abs(angle) < FOCAL_ANGLE_THRESHOLD;
             case PlayerList -> minecraft.options.keyPlayerList.isDown();
+            default -> false;
         };
 
         String key = this.waypoint.id().toString();
