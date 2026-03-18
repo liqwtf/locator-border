@@ -10,10 +10,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ScreenBounds {
-    private static final float HOTBAR_WIDTH = 182.0f + 24.0f;
-    private static final float FADE_BUFFER = 48.0f;
-    private static final float FOCAL_ANGLE_THRESHOLD = 15.0f;
-    private static final float LERP_RATE = 0.05f;
+    private static final float HOTBAR_WIDTH = 182f + 24f;
+    private static final float HOTBAR_FADE_BUFFER = 48f;
+    private static final float FOCAL_ANGLE_THRESHOLD = 15f;
+    private static final float ANIMATION_DURATION_MS = 250f;
 
     private static final Map<String, Float> animationStates = new HashMap<>();
 
@@ -32,10 +32,6 @@ public class ScreenBounds {
     private static float smoothstep(float t) {
         t = Mth.clamp(t, 0f, 1f);
         return t * t * (3f - 2f * t);
-    }
-
-    private static float deltaFactor(float rate, float deltaTick) {
-        return 1f - (float) Math.pow(1f - rate, deltaTick * 20f);
     }
 
     private float centerX() {
@@ -70,7 +66,7 @@ public class ScreenBounds {
         float dist = Math.abs(posX - centerX()) - HOTBAR_WIDTH / 2f;
         if (!config.animations) return dist > 0f ? 1f : 0f;
 
-        return Mth.clamp(dist / FADE_BUFFER, 0f, 1f);
+        return Mth.clamp(dist / HOTBAR_FADE_BUFFER, 0f, 1f);
     }
 
     public RenderState compute(float angle, float width, float height, float deltaTick) {
@@ -91,8 +87,13 @@ public class ScreenBounds {
         float targetProgress = focused ? 1.0f : 0.0f;
 
         if (config.animations) {
-            currentProgress = Mth.lerp(deltaFactor(LERP_RATE, deltaTick), currentProgress, targetProgress);
-            if (Math.abs(currentProgress - targetProgress) < 0.002f) currentProgress = targetProgress;
+            float step = (deltaTick * 50f) / ANIMATION_DURATION_MS;
+
+            if (focused) {
+                currentProgress = Math.min(currentProgress + step, 1.0f);
+            } else {
+                currentProgress = Math.max(currentProgress - step, 0.0f);
+            }
         } else {
             currentProgress = targetProgress;
         }
@@ -105,10 +106,6 @@ public class ScreenBounds {
         float alpha = computeAlpha(position.x, position.y);
 
         return new RenderState(position.x, position.y, directionX, directionY, centerX(), centerY(), alpha, easedProgress, currentProgress, focused);
-    }
-
-    public RenderState compute(float angle, float width, float height) {
-        return compute(angle, width, height, 1.0f);
     }
 
     public void project(float angle, float width, float height, float deltaTick, DrawCallback callback) {
@@ -130,12 +127,10 @@ public class ScreenBounds {
         void draw(GuiGraphics graphics, RenderState state);
     }
 
-    private record Point(float x, float y) {
-    }
+    private record Point(float x, float y) {}
 
     public record RenderState(float x, float y, float directionX, float directionY, float centerX, float centerY,
                               float alpha, float animationProgress, float rawAnimationProgress, boolean focused) {
-
         public int setAlpha(int color) {
             return (color & 0x00FFFFFF) | ((int) (((color >> 24) & 0xFF) * alpha) << 24);
         }
@@ -143,10 +138,6 @@ public class ScreenBounds {
         public int setAlpha(int color, float extraAlpha) {
             float combined = alpha * Mth.clamp(extraAlpha, 0f, 1f);
             return (color & 0x00FFFFFF) | ((int) (((color >> 24) & 0xFF) * combined) << 24);
-        }
-
-        public boolean isFocused() {
-            return focused;
         }
     }
 }
