@@ -8,8 +8,6 @@
   "text.autoconfig.locator-border.option.margin.@Tooltip": "Distance between waypoints and the edge of the screen",
   "text.autoconfig.locator-border.option.color": "Waypoint Color",
   "text.autoconfig.locator-border.option.color.@Tooltip": "Decides the color of the waypoint",
-  "text.autoconfig.locator-border.option.displayNames": "Display Names",
-  "text.autoconfig.locator-border.option.displayNames.@Tooltip": "Show usernames next to waypoints",
 
   "text.autoconfig.locator-border.option.renderPlayerFace": "Render Player Face",
   "text.autoconfig.locator-border.option.renderPlayerFace.enabled": "Enabled",
@@ -19,12 +17,22 @@
   "text.autoconfig.locator-border.option.renderPlayerFace.color": "Outline Color",
   "text.autoconfig.locator-border.option.renderPlayerFace.color.@Tooltip": "Decides the color of the outline",
 
+  "text.autoconfig.locator-border.option.focusWaypoint": "Focus Waypoint",
+  "text.autoconfig.locator-border.option.focusWaypoint.enabled": "Enabled",
+  "text.autoconfig.locator-border.option.focusWaypoint.enabled.@Tooltip": "Show usernames next to waypoints",
+  "text.autoconfig.locator-border.option.focusWaypoint.trigger": "Trigger",
+  "text.autoconfig.locator-border.option.focusWaypoint.trigger.@Tooltip": "What action causes a waypoint to be focused",
+  "text.autoconfig.locator-border.option.focusWaypoint.displayName": "Display Names",
+  "text.autoconfig.locator-border.option.focusWaypoint.displayName.@Tooltip": "Show usernames next to waypoints",
+  "text.autoconfig.locator-border.option.focusWaypoint.inset": "Inset",
+  "text.autoconfig.locator-border.option.focusWaypoint.scale": "Icon Scale",
+
   "text.autoconfig.locator-border.category.overrides": "Overrides",
   "text.autoconfig.locator-border.option.overrides": "Player Specific Config",
   "text.autoconfig.locator-border.option.PlayerSpecificConfig": "Override",
   "text.autoconfig.locator-border.option.PlayerSpecificConfig.name": "Player Name",
   "text.autoconfig.locator-border.option.PlayerSpecificConfig.override.color": "Waypoint Color",
-  "text.autoconfig.locator-border.option.PlayerSpecificConfig.override.iconScale": "Icon Scale (%)",
+  "text.autoconfig.locator-border.option.PlayerSpecificConfig.override.scale": "Icon Scale",
 
   "text.autoconfig.locator-border.category.miscellaneous": "Miscellaneous",
   "text.autoconfig.locator-border.option.compass": "Cardinal Directions",

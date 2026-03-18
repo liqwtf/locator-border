@@ -6,6 +6,7 @@ import me.liqw.locatorborder.util.CompassPoints;
 import me.liqw.locatorborder.util.ScreenBounds;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.contextualbar.LocatorBarRenderer;
@@ -56,10 +57,12 @@ public abstract class GuiMixin {
         for (CompassPoints.Point point : CompassPoints.POINTS) {
             if (point.isIntercardinal() && !config.compass.intercardinal) continue;
 
-            ScreenBounds bounds = new ScreenBounds(this.minecraft, graphics, config);
+            ScreenBounds bounds = new ScreenBounds(this.minecraft, graphics, config, null);
+            Font font = this.minecraft.font;
+            String label = point.label();
 
-            bounds.project(graphics, point.angle() - yaw, config, (g, state) -> {
-                g.drawCenteredString(this.minecraft.font, point.label(), 0, -this.minecraft.font.lineHeight / 2, state.setAlpha(point.getColor()));
+            bounds.project(point.angle() - yaw, font.width(label), font.lineHeight, (g, state) -> {
+                g.drawCenteredString(font, point.label(), 0, -font.lineHeight / 2, state.setAlpha(point.getColor()));
             });
         }
     }

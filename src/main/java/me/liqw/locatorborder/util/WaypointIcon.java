@@ -24,25 +24,21 @@ public class WaypointIcon {
     private static final int FACE_OUTLINE_PX = 1;
     private static final float FOCAL_ANGLE_THRESHOLD = 15.0f;
 
-    private final GuiGraphics graphics;
     private final Minecraft client;
     private final LocatorBorderConfig config;
-    private final ScreenBounds.RenderState state;
 
-    public WaypointIcon(GuiGraphics graphics, Minecraft client, LocatorBorderConfig config, ScreenBounds.RenderState state) {
-        this.graphics = graphics;
+    public WaypointIcon(Minecraft client, LocatorBorderConfig config) {
         this.client = client;
         this.config = config;
-        this.state = state;
     }
 
-    public void render(Entity cameraEntity, TrackedWaypoint waypoint, float angle) {
+    public void render(GuiGraphics graphics, ScreenBounds.RenderState state, Entity cameraEntity, TrackedWaypoint waypoint) {
         UUID uuid = waypoint.id().left().orElse(null);
         PlayerInfo player = uuid != null ? client.getConnection().getPlayerInfo(uuid) : null;
         boolean renderPlayerFace = config.renderPlayerFace.enabled && uuid != null;
         float distance = Mth.sqrt((float) waypoint.distanceSquared(cameraEntity));
-        float scale = getIconScale(player);
         int size = renderPlayerFace ? getPlayerFaceSize(distance) : BASE_DOT_SIZE;
+        float scale = getIconScale(player, state.animationProgress());
         size = (int) ((float) size * scale);
 
         if (renderPlayerFace) {
@@ -61,18 +57,8 @@ public class WaypointIcon {
             graphics.blitSprite(RenderPipelines.GUI_TEXTURED, style.sprite(distance), -size / 2, -size / 2, size, size, state.setAlpha(color));
         }
 
-        if (player != null) {
-            boolean visible = switch (config.displayNames) {
-                case Hover -> state.isHovered(size, size);
-                case Focal -> Math.abs(angle) < FOCAL_ANGLE_THRESHOLD;
-                case PlayerList -> client.options.keyPlayerList.isDown();
-                case Always -> true;
-                default -> false;
-            };
-
-            if (visible) {
-                displayName(graphics, client, player.getProfile().name(), size, state);
-            }
+        if (player != null && (config.focusWaypoint.displayName && state.isFocused())) {
+            displayName(graphics, client, player.getProfile().name(), size, state);
         }
     }
 
@@ -84,15 +70,19 @@ public class WaypointIcon {
         return 8;
     }
 
-    private float getIconScale(PlayerInfo player) {
+    private float getIconScale(PlayerInfo player, float animationProgress) {
+        float baseScale = 1.0f;
+
         if (player != null) {
             String key = player.getProfile().name();
             if (config.overrideCache.containsKey(key)) {
-                return config.overrideCache.get(key).iconScale / 100.0f;
+                baseScale = config.overrideCache.get(key).scale;
             }
         }
 
-        return 1.0f;
+        float targetScale = baseScale * config.focusWaypoint.scale;
+
+        return Mth.lerp(animationProgress, baseScale, targetScale);
     }
 
     private int getWaypointColor(TrackedWaypoint waypoint, LocatorBorderConfig.WaypointColor source) {

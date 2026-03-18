@@ -28,16 +28,14 @@ public class LocatorBorderConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip
     public boolean enabled = true;
     @ConfigEntry.Gui.Tooltip
-    @ConfigEntry.BoundedDiscrete(min = 0, max = 16)
     public int margin = 4;
     @ConfigEntry.Gui.Tooltip
     @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
     public WaypointColor color = WaypointColor.Waypoint;
-    @ConfigEntry.Gui.Tooltip
-    @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
-    public DisplayNames displayNames = DisplayNames.Hover;
     @ConfigEntry.Gui.CollapsibleObject(startExpanded = true)
     public RenderPlayerFace renderPlayerFace = new RenderPlayerFace();
+    @ConfigEntry.Gui.CollapsibleObject(startExpanded = true)
+    public FocusWaypoint focusWaypoint = new FocusWaypoint();
 
     @ConfigEntry.Gui.Excluded
     public transient Map<String, PlayerSpecificConfig.Override> overrideCache = new HashMap<>();
@@ -74,6 +72,27 @@ public class LocatorBorderConfig implements ConfigData {
         public OutlineColor color = OutlineColor.Black;
     }
 
+    public static class FocusWaypoint {
+        public enum Trigger {
+            Hover, Focal, PlayerList;
+
+            public String toString() {
+                return this.name().replaceAll("([a-z])([A-Z])", "$1 $2");
+            }
+        }
+
+        @ConfigEntry.Gui.Tooltip
+        public boolean enabled = true;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
+        public Trigger trigger = Trigger.Hover;
+        @ConfigEntry.Gui.Tooltip
+        public boolean displayName = true;
+        public int inset = 4;
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 2)
+        public float scale = 1.2f;
+    }
+
     public static class CardinalDirections {
         @ConfigEntry.Gui.Tooltip
         public boolean enabled = false;
@@ -90,7 +109,7 @@ public class LocatorBorderConfig implements ConfigData {
             @ConfigEntry.ColorPicker
             public int color = 0xFFFFFF;
             @ConfigEntry.BoundedDiscrete(min = 50, max = 400)
-            public int iconScale = 100;
+            public float scale = 1.0f;
 
             public Override() {}
             public Override(int color) {
