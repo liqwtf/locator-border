@@ -39,13 +39,14 @@ public abstract class LocatorBarRendererMixin {
         PartialTickSupplier tickSupplier = entity -> delta.getGameTimeDeltaPartialTick(!isFrozen);
 
         this.minecraft.player.connection.getWaypointManager().forEachWaypoint(cameraEntity, waypoint -> {
-            if (waypoint.id().left().filter(uuid -> uuid.equals(cameraEntity.getUUID())).isPresent()) return;
+            if (waypoint.id().left().filter(cameraEntity.getUUID()::equals).isPresent()) return;
 
-            float angle = (float) waypoint.yawAngleToCamera(level, camera, tickSupplier);
             ScreenBounds bounds = new ScreenBounds(this.minecraft, graphics, config, waypoint);
             WaypointIcon icon = new WaypointIcon(this.minecraft, config);
+            float angle = (float) waypoint.yawAngleToCamera(level, camera, tickSupplier);
+            int size = icon.getBaseSize(waypoint, cameraEntity);
 
-            bounds.project(angle, 8, 8, (g, state) -> {
+            bounds.project(angle, size, size, (g, state) -> {
                 icon.render(g, state, cameraEntity, waypoint);
             });
         });
