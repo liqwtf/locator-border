@@ -29,11 +29,6 @@ public class ScreenBounds {
         this.waypoint = waypoint;
     }
 
-    private static float smoothstep(float t) {
-        t = Mth.clamp(t, 0f, 1f);
-        return t * t * (3f - 2f * t);
-    }
-
     private float centerX() {
         return graphics.guiWidth() / 2.0f;
     }
@@ -79,7 +74,7 @@ public class ScreenBounds {
         boolean alwaysFocused = this.waypoint.id().left()
                 .map(minecraft.getConnection()::getPlayerInfo)
                 .map(info -> config.overrideCache.get(info.getProfile().name().toLowerCase()))
-                .map(o -> o.focused)
+                .map(o -> o.alwaysFocused)
                 .orElse(false);
 
         boolean focused = alwaysFocused || switch (config.focusWaypoint.trigger) {
@@ -107,7 +102,7 @@ public class ScreenBounds {
 
         animationStates.put(key, currentProgress);
 
-        float easedProgress = smoothstep(currentProgress);
+        float easedProgress = Helpers.smoothstep(currentProgress);
         float animatedInset = config.focusWaypoint.inset * easedProgress;
         Point position = project(directionX, directionY, config.margin + (int) animatedInset);
         float alpha = computeAlpha(position.x, position.y);

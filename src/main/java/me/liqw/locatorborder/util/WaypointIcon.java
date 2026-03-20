@@ -67,8 +67,8 @@ public class WaypointIcon {
             graphics.blitSprite(RenderPipelines.GUI_TEXTURED, style.sprite(distance), -size / 2, -size / 2, size, size, state.setAlpha(color));
         }
 
-        boolean showName = player != null && config.focusWaypoint.labels.displayName;
-        boolean showDistance = config.focusWaypoint.labels.displayDistance;
+        boolean showName = player != null && config.focusWaypoint.labels.showName;
+        boolean showDistance = config.focusWaypoint.labels.showDistance;
 
         if ((showName || showDistance) && state.animationProgress() > 0f) {
             String nameText = showName ? player.getProfile().name() : null;

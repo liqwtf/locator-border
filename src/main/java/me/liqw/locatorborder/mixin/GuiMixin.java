@@ -55,7 +55,7 @@ public abstract class GuiMixin {
         float yaw = cameraEntity.getYRot();
 
         for (CompassPoints.Point point : CompassPoints.POINTS) {
-            if (point.isIntercardinal() && !config.compass.intercardinal) continue;
+            if (point.isIntercardinal() && !config.compass.showIntercardinal) continue;
 
             ScreenBounds bounds = new ScreenBounds(this.minecraft, graphics, config, null);
             Font font = this.minecraft.font;

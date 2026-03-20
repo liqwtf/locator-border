@@ -6,6 +6,7 @@ import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Config(name = LocatorBorder.MOD_ID)
 public class LocatorBorderConfig implements ConfigData {
@@ -18,36 +19,38 @@ public class LocatorBorderConfig implements ConfigData {
 
     @ConfigEntry.Gui.Tooltip
     public boolean enabled = true;
+
     @ConfigEntry.Gui.Tooltip
     public int margin = 4;
+
     @ConfigEntry.Gui.Tooltip
     @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
     public WaypointColor color = WaypointColor.Waypoint;
-    @ConfigEntry.Gui.CollapsibleObject
+
+    @ConfigEntry.Gui.CollapsibleObject(startExpanded = true)
     public RenderPlayerFace renderPlayerFace = new RenderPlayerFace();
-    @ConfigEntry.Gui.CollapsibleObject
+
+    @ConfigEntry.Gui.CollapsibleObject(startExpanded = true)
     public FocusWaypoint focusWaypoint = new FocusWaypoint();
 
-    @ConfigEntry.Category("miscellaneous")
-    public List<PlayerSpecificConfig> overrides = new ArrayList<>(List.of(
-            new PlayerSpecificConfig("liqw", new PlayerSpecificConfig.Override(0x6395EE))
-    ));
+    @ConfigEntry.Gui.Tooltip
+    @ConfigEntry.Category("overrides")
+    public List<PlayerSpecificConfig> overrides = new ArrayList<>();
+
     @ConfigEntry.Category("miscellaneous")
     @ConfigEntry.Gui.CollapsibleObject
     public CardinalDirections compass = new CardinalDirections();
+
     @ConfigEntry.Category("miscellaneous")
     public boolean animations = true;
 
     @Override
     public void validatePostLoad() {
-        overrideCache.clear();
-        if (overrides == null) return;
+        if (overrides == null) overrides = new ArrayList<>();
 
         overrides.removeIf(entry -> entry.name == null || entry.name.isBlank());
-
-        for (PlayerSpecificConfig entry : overrides) {
-            overrideCache.put(entry.name.toLowerCase(), entry.override);
-        }
+        overrideCache = overrides.stream()
+                .collect(Collectors.toMap(e -> e.name.toLowerCase(), e -> e.override));
     }
 
     public static class RenderPlayerFace {
@@ -57,8 +60,10 @@ public class LocatorBorderConfig implements ConfigData {
 
         @ConfigEntry.Gui.Tooltip
         public boolean enabled = false;
+
         @ConfigEntry.Gui.Tooltip
         public boolean distanceScale = true;
+
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
         public OutlineColor color = OutlineColor.Black;
@@ -76,46 +81,46 @@ public class LocatorBorderConfig implements ConfigData {
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
         public Trigger trigger = Trigger.Hover;
+
+        @ConfigEntry.Gui.Tooltip
         public float scale = 1.2f;
+
+        @ConfigEntry.Gui.Tooltip
         public int inset = 2;
+
         @ConfigEntry.Gui.CollapsibleObject
         public FocusLabels labels = new FocusLabels();
 
         public static class FocusLabels {
             @ConfigEntry.Gui.Tooltip
-            public boolean displayName = true;
+            public boolean showName = true;
+
             @ConfigEntry.Gui.Tooltip
-            public boolean displayDistance = false;
+            public boolean showDistance = false;
         }
     }
 
     public static class PlayerSpecificConfig {
         public String name;
-        @ConfigEntry.Gui.TransitiveObject
+
+        @ConfigEntry.Gui.CollapsibleObject(startExpanded = true)
         public Override override = new Override();
 
         public static class Override {
+            @ConfigEntry.Gui.Tooltip
             @ConfigEntry.ColorPicker
             public int color = 0xFFFFFF;
-            public boolean focused = false;
 
-            public Override() {}
-            public Override(int color) {
-                this.color = color;
-            }
-        }
-
-        public PlayerSpecificConfig() {}
-        public PlayerSpecificConfig(String name, Override override) {
-            this.name = name;
-            this.override = override;
+            @ConfigEntry.Gui.Tooltip
+            public boolean alwaysFocused = false;
         }
     }
 
     public static class CardinalDirections {
         @ConfigEntry.Gui.Tooltip
         public boolean enabled = false;
+
         @ConfigEntry.Gui.Tooltip
-        public boolean intercardinal = false;
+        public boolean showIntercardinal = false;
     }
 }
