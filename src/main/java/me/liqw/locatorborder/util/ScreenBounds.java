@@ -20,13 +20,19 @@ public class ScreenBounds {
     private final Minecraft minecraft;
     private final GuiGraphics graphics;
     private final LocatorBorderConfig config;
-    private final TrackedWaypoint waypoint;
+    private TrackedWaypoint waypoint;
 
     public ScreenBounds(Minecraft minecraft, GuiGraphics graphics, LocatorBorderConfig config, TrackedWaypoint waypoint) {
         this.minecraft = minecraft;
         this.graphics = graphics;
         this.config = config;
         this.waypoint = waypoint;
+    }
+
+    public ScreenBounds(Minecraft minecraft, GuiGraphics graphics, LocatorBorderConfig config) {
+        this.minecraft = minecraft;
+        this.graphics = graphics;
+        this.config = config;
     }
 
     private float centerX() {
@@ -71,7 +77,7 @@ public class ScreenBounds {
 
         Point outer = project(directionX, directionY, config.margin);
 
-        boolean alwaysFocused = this.waypoint.id().left()
+        boolean alwaysFocused = this.waypoint != null && this.waypoint.id().left()
                 .map(minecraft.getConnection()::getPlayerInfo)
                 .map(info -> config.overrideCache.get(info.getProfile().name().toLowerCase()))
                 .map(o -> o.alwaysFocused)
@@ -84,8 +90,8 @@ public class ScreenBounds {
             default -> false;
         };
 
-        String key = this.waypoint.id().toString();
-        float currentProgress = animationStates.getOrDefault(key, 0.0f);
+        String key = this.waypoint != null ? this.waypoint.id().toString() : null;
+        float currentProgress = key != null ? animationStates.getOrDefault(key, 0.0f) : 0.0f;
         float targetProgress = focused ? 1.0f : 0.0f;
 
         if (config.animations) {
@@ -100,14 +106,26 @@ public class ScreenBounds {
             currentProgress = targetProgress;
         }
 
-        animationStates.put(key, currentProgress);
+        if (key != null) animationStates.put(key, currentProgress);
 
         float easedProgress = Helpers.smoothstep(currentProgress);
         float animatedInset = config.focusWaypoint.inset * easedProgress;
         Point position = project(directionX, directionY, config.margin + (int) animatedInset);
         float alpha = computeAlpha(position.x, position.y);
 
-        return new RenderState(position.x, position.y, directionX, directionY, centerX(), centerY(), alpha, easedProgress, currentProgress, focused);
+        return new RenderState(position.x, position.y, directionX, directionY,
+                centerX(), centerY(), alpha, easedProgress, currentProgress, focused);
+    }
+
+    public RenderState computeStatic(float angle) {
+        double radians   = Math.toRadians(angle);
+        float directionX = (float)  Math.sin(radians);
+        float directionY = (float) -Math.cos(radians);
+        Point position   = project(directionX, directionY, config.margin);
+        float alpha      = computeAlpha(position.x, position.y);
+
+        return new RenderState(position.x, position.y, directionX, directionY,
+                centerX(), centerY(), alpha, 0f, 0f, false);
     }
 
     public void project(float angle, float width, float height, float deltaTick, DrawCallback callback) {
@@ -122,6 +140,16 @@ public class ScreenBounds {
 
     public void project(float angle, float width, float height, DrawCallback callback) {
         project(angle, width, height, 1.0f, callback);
+    }
+
+    public void project(float angle, DrawCallback callback) {
+        RenderState state = computeStatic(angle);
+        if (state.alpha <= 0.0f) return;
+
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(state.x(), state.y());
+        callback.draw(graphics, state);
+        graphics.pose().popMatrix();
     }
 
     @FunctionalInterface

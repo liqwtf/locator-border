@@ -31,7 +31,7 @@ public abstract class GuiMixin {
     }
 
     @Inject(method = "renderHotbarAndDecorations", at = @At("TAIL"))
-    private void renderLocatorBar(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
+    private void renderLocatorBar(GuiGraphics guiGraphics, DeltaTracker delta, CallbackInfo ci) {
         LocatorBorderConfig config = LocatorBorder.getConfig();
 
         if (config.enabled && this.minecraft.player != null && this.minecraft.player.connection.getWaypointManager().hasWaypoints()) {
@@ -39,7 +39,7 @@ public abstract class GuiMixin {
                 this.renderer = new LocatorBarRenderer(this.minecraft);
             }
 
-            this.renderer.render(guiGraphics, deltaTracker);
+            this.renderer.render(guiGraphics, delta);
         }
     }
 
@@ -57,11 +57,10 @@ public abstract class GuiMixin {
         for (CompassPoints.Point point : CompassPoints.POINTS) {
             if (point.isIntercardinal() && !config.compass.showIntercardinal) continue;
 
-            ScreenBounds bounds = new ScreenBounds(this.minecraft, graphics, config, null);
+            ScreenBounds bounds = new ScreenBounds(this.minecraft, graphics, config);
             Font font = this.minecraft.font;
-            String label = point.label();
 
-            bounds.project(point.angle() - yaw, font.width(label), font.lineHeight, (g, state) -> {
+            bounds.project(point.angle() - yaw, (g, state) -> {
                 g.drawCenteredString(font, point.label(), 0, -font.lineHeight / 2, state.setAlpha(point.getColor()));
             });
         }
