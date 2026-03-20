@@ -1,3 +1,3 @@
-# Locator Border
+![Locator Border](https://raw.githubusercontent.com/liqwtf/locator-border/refs/heads/master/src/main/resources/assets/locator-border/banner.png)
 
 Moves the pesky [locator bar](https://minecraft.wiki/w/Locator_Bar) to the edge of the screen instead of cluttering the center, leaving your view and experience bar unobstructed. This turns waypoints into useful off-screen indicators without taking up valuable screen real estate. Locator Border includes extensive customization options, such as: customize waypoint colors, display player names next to waypoints, and toggle cardinal and intercardinal direction markers.
