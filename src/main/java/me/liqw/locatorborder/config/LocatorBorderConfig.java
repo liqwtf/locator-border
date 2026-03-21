@@ -54,6 +54,10 @@ public class LocatorBorderConfig implements ConfigData {
     }
 
     public static class RenderPlayerFace {
+        public enum OutlineStyle {
+            Border, Shadow, None,
+        }
+
         public enum OutlineColor {
             Waypoint, Team, Black,
         }
@@ -64,9 +68,18 @@ public class LocatorBorderConfig implements ConfigData {
         @ConfigEntry.Gui.Tooltip
         public boolean distanceScale = true;
 
-        @ConfigEntry.Gui.Tooltip
-        @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
-        public OutlineColor color = OutlineColor.Black;
+        @ConfigEntry.Gui.TransitiveObject
+        public Outline outline = new Outline();
+
+        public static class Outline {
+            @ConfigEntry.Gui.Tooltip
+            @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
+            public OutlineStyle style = OutlineStyle.Border;
+
+            @ConfigEntry.Gui.Tooltip
+            @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
+            public OutlineColor color = OutlineColor.Black;
+        }
     }
 
     public static class FocusWaypoint {

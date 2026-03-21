@@ -70,6 +70,11 @@ public class ScreenBounds {
         return Mth.clamp(dist / HOTBAR_FADE_BUFFER, 0f, 1f);
     }
 
+    private static float smoothstep(float t) {
+        t = Mth.clamp(t, 0f, 1f);
+        return t * t * (3f - 2f * t);
+    }
+
     public RenderState compute(float angle, float width, float height, float deltaTick) {
         double radians = Math.toRadians(angle);
         float directionX = (float) Math.sin(radians);
@@ -108,7 +113,7 @@ public class ScreenBounds {
 
         if (key != null) animationStates.put(key, currentProgress);
 
-        float easedProgress = Helpers.smoothstep(currentProgress);
+        float easedProgress = smoothstep(currentProgress);
         float animatedInset = config.focusWaypoint.inset * easedProgress;
         Point position = project(directionX, directionY, config.margin + (int) animatedInset);
         float alpha = computeAlpha(position.x, position.y);
@@ -128,6 +133,10 @@ public class ScreenBounds {
                 centerX(), centerY(), alpha, 0f, 0f, false);
     }
 
+    public void project(float angle, float width, float height, DrawCallback callback) {
+        project(angle, width, height, 1.0f, callback);
+    }
+
     public void project(float angle, float width, float height, float deltaTick, DrawCallback callback) {
         RenderState state = compute(angle, width, height, deltaTick);
         if (state.alpha <= 0.0f) return;
@@ -136,10 +145,6 @@ public class ScreenBounds {
         graphics.pose().translate(state.x(), state.y());
         callback.draw(graphics, state);
         graphics.pose().popMatrix();
-    }
-
-    public void project(float angle, float width, float height, DrawCallback callback) {
-        project(angle, width, height, 1.0f, callback);
     }
 
     public void project(float angle, DrawCallback callback) {

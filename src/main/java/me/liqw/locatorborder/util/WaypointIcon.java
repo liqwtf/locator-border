@@ -20,6 +20,8 @@ import java.util.UUID;
 public class WaypointIcon {
     private static final int BASE_DOT_SIZE = 9;
     private static final int FACE_OUTLINE_PX = 1;
+    private static final int SHADOW_OFFSET = 1;
+    private static final float SHADOW_BRIGHTNESS = 0.25f;
 
     private static final LocatorBorderConfig.PlayerSpecificConfig.Override DEFAULT_OVERRIDE = new LocatorBorderConfig.PlayerSpecificConfig.Override();
 
@@ -54,11 +56,20 @@ public class WaypointIcon {
 
         if (renderPlayerFace) {
             PlayerSkin skin = player != null ? player.getSkin() : DefaultPlayerSkin.get(uuid);
-            int outlineColor = getOutlineColor(waypoint, config.renderPlayerFace.color);
+            int outlineColor = getOutlineColor(waypoint, config.renderPlayerFace.outline.color);
             int outlineSize = size + Math.max(1, (int) (FACE_OUTLINE_PX * scale)) * 2;
 
-            graphics.fill(-outlineSize / 2, -size / 2, (-outlineSize / 2) + outlineSize, (-size / 2) + size, state.setAlpha(outlineColor));
-            graphics.fill(-size / 2, -outlineSize / 2, (-size / 2) + size, (-outlineSize / 2) + outlineSize, state.setAlpha(outlineColor));
+            switch (config.renderPlayerFace.outline.style) {
+                case Border -> {
+                    graphics.fill(-outlineSize / 2, -size / 2, (-outlineSize / 2) + outlineSize, (-size / 2) + size, state.setAlpha(outlineColor));
+                    graphics.fill(-size / 2, -outlineSize / 2, (-size / 2) + size, (-outlineSize / 2) + outlineSize, state.setAlpha(outlineColor));
+                }
+                case Shadow -> {
+                    int offset = (int) ((float) SHADOW_OFFSET * scale);
+                    PlayerFaceRenderer.draw(graphics, skin, -size / 2 + offset, -size / 2 + offset, size, state.setAlpha(darken(outlineColor, SHADOW_BRIGHTNESS)));
+                }
+            }
+
             PlayerFaceRenderer.draw(graphics, skin, -size / 2, -size / 2, size, state.setAlpha(0xFFFFFFFF));
         } else {
             WaypointStyle style = minecraft.getWaypointStyles().get(waypoint.icon().style);
@@ -76,6 +87,14 @@ public class WaypointIcon {
 
             renderLabels(graphics, nameText, distanceText, size, state);
         }
+    }
+
+    private static int darken(int color, float factor) {
+        int a = (color >> 24) & 0xFF;
+        int r = (int) (((color >> 16) & 0xFF) * factor);
+        int g = (int) (((color >>  8) & 0xFF) * factor);
+        int b = (int) (( color        & 0xFF) * factor);
+        return (a << 24) | (r << 16) | (g << 8) | b;
     }
 
     private int getPlayerFaceSize(float distance) {

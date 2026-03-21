@@ -14,8 +14,10 @@
   "text.autoconfig.locator-border.option.renderPlayerFace.enabled.@Tooltip": "Render waypoint icons as player heads",
   "text.autoconfig.locator-border.option.renderPlayerFace.distanceScale": "Scale With Distance",
   "text.autoconfig.locator-border.option.renderPlayerFace.distanceScale.@Tooltip": "Whether to scale player heads with distance",
-  "text.autoconfig.locator-border.option.renderPlayerFace.color": "Outline Color",
-  "text.autoconfig.locator-border.option.renderPlayerFace.color.@Tooltip": "Decides the color of the outline",
+  "text.autoconfig.locator-border.option.renderPlayerFace.outline.style": "Outline Style",
+  "text.autoconfig.locator-border.option.renderPlayerFace.outline.style.@Tooltip": "How the border around player face icons is drawn",
+  "text.autoconfig.locator-border.option.renderPlayerFace.outline.color": "Outline Color",
+  "text.autoconfig.locator-border.option.renderPlayerFace.outline.color.@Tooltip": "Decides the color of the outline",
 
   "text.autoconfig.locator-border.option.focusWaypoint": "Focus Waypoint",
   "text.autoconfig.locator-border.option.focusWaypoint.trigger": "Trigger",
