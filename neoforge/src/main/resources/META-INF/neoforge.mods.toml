@@ -1,0 +1,32 @@
+modLoader = "javafml"
+loaderVersion = "[2,)"
+#issueTrackerURL = ""
+license = "MIT"
+
+[[mods]]
+modId = "locator_border"
+version = "${version}"
+displayName = "Locator Border"
+authors = "liqw"
+description = '''
+Moves the locator bar to the border of the screen
+'''
+logoFile = "icon.png"
+
+[[dependencies.locator_border]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21,)"
+ordering = "NONE"
+side = "CLIENT"
+
+[[dependencies.locator_border]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21.11,)"
+ordering = "NONE"
+side = "CLIENT"
+
+
+[[mixins]]
+config = "locator-border.mixins.json"
