@@ -2,7 +2,7 @@ package me.liqw.locatorborder.util;
 
 import me.liqw.locatorborder.config.LocatorBorderConfig;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.util.Mth;
 import net.minecraft.world.waypoints.TrackedWaypoint;
 
@@ -18,18 +18,18 @@ public class ScreenBounds {
     private static final Map<String, Float> animationStates = new HashMap<>();
 
     private final Minecraft minecraft;
-    private final GuiGraphics graphics;
+    private final GuiGraphicsExtractor graphics;
     private final LocatorBorderConfig config;
     private TrackedWaypoint waypoint;
 
-    public ScreenBounds(Minecraft minecraft, GuiGraphics graphics, LocatorBorderConfig config, TrackedWaypoint waypoint) {
+    public ScreenBounds(Minecraft minecraft, GuiGraphicsExtractor graphics, LocatorBorderConfig config, TrackedWaypoint waypoint) {
         this.minecraft = minecraft;
         this.graphics = graphics;
         this.config = config;
         this.waypoint = waypoint;
     }
 
-    public ScreenBounds(Minecraft minecraft, GuiGraphics graphics, LocatorBorderConfig config) {
+    public ScreenBounds(Minecraft minecraft, GuiGraphicsExtractor graphics, LocatorBorderConfig config) {
         this.minecraft = minecraft;
         this.graphics = graphics;
         this.config = config;
@@ -159,7 +159,7 @@ public class ScreenBounds {
 
     @FunctionalInterface
     public interface DrawCallback {
-        void draw(GuiGraphics graphics, RenderState state);
+        void draw(GuiGraphicsExtractor graphics, RenderState state);
     }
 
     private record Point(float x, float y) {}
