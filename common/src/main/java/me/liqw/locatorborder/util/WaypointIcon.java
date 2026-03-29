@@ -2,8 +2,8 @@ package me.liqw.locatorborder.util;
 
 import me.liqw.locatorborder.config.LocatorBorderConfig;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.PlayerFaceRenderer;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.PlayerFaceExtractor;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.DefaultPlayerSkin;
@@ -44,7 +44,7 @@ public class WaypointIcon {
         return BASE_DOT_SIZE;
     }
 
-    public void render(GuiGraphics graphics, ScreenBounds.RenderState state, Entity cameraEntity, TrackedWaypoint waypoint) {
+    public void render(GuiGraphicsExtractor graphics, ScreenBounds.RenderState state, Entity cameraEntity, TrackedWaypoint waypoint) {
         UUID uuid = waypoint.id().left().orElse(null);
         PlayerInfo player = uuid != null ? minecraft.getConnection().getPlayerInfo(uuid) : null;
         boolean renderPlayerFace = config.renderPlayerFace.enabled && uuid != null;
@@ -66,11 +66,11 @@ public class WaypointIcon {
                 }
                 case Shadow -> {
                     int offset = (int) ((float) SHADOW_OFFSET * scale);
-                    PlayerFaceRenderer.draw(graphics, skin, -size / 2 + offset, -size / 2 + offset, size, state.setAlpha(darken(outlineColor, SHADOW_BRIGHTNESS)));
+                    PlayerFaceExtractor.extractRenderState(graphics, skin, -size / 2 + offset, -size / 2 + offset, size, state.setAlpha(darken(outlineColor, SHADOW_BRIGHTNESS)));
                 }
             }
 
-            PlayerFaceRenderer.draw(graphics, skin, -size / 2, -size / 2, size, state.setAlpha(0xFFFFFFFF));
+            PlayerFaceExtractor.extractRenderState(graphics, skin, -size / 2, -size / 2, size, state.setAlpha(0xFFFFFFFF));
         } else {
             WaypointStyle style = minecraft.getWaypointStyles().get(waypoint.icon().style);
             int color = getWaypointColor(waypoint, config.color);
@@ -137,7 +137,7 @@ public class WaypointIcon {
         });
     }
 
-    private void renderLabels(GuiGraphics graphics, String name, String distanceText, int iconSize, ScreenBounds.RenderState state) {
+    private void renderLabels(GuiGraphicsExtractor graphics, String name, String distanceText, int iconSize, ScreenBounds.RenderState state) {
         int lineHeight = minecraft.font.lineHeight;
         int lineSpacing = 2;
         int marginX = 6, marginY = 4;
@@ -177,13 +177,13 @@ public class WaypointIcon {
 
         if (name != null) {
             int x = anchorX + (maxWidth - nameWidth) / 2;
-            graphics.drawString(minecraft.font, name, x, anchorY + yOffset, state.setAlpha(0xFFFFFFFF, alpha));
+            graphics.text(minecraft.font, name, x, anchorY + yOffset, state.setAlpha(0xFFFFFFFF, alpha));
             yOffset += lineHeight + lineSpacing;
         }
 
         if (distanceText != null) {
             int x = anchorX + (maxWidth - distanceWidth) / 2;
-            graphics.drawString(minecraft.font, distanceText, x, anchorY + yOffset, state.setAlpha(0xFFAAAAAA, alpha));
+            graphics.text(minecraft.font, distanceText, x, anchorY + yOffset, state.setAlpha(0xFFAAAAAA, alpha));
         }
     }
 }
