@@ -113,7 +113,7 @@ public class WaypointIcon {
         return waypoint.id().left().map(minecraft.getConnection()::getPlayerInfo).map(info -> config.overrideCache.get(info.getProfile().name().toLowerCase())).map(o -> 0xFF000000 | o.color);
     }
 
-    private int getWaypointColor(TrackedWaypoint waypoint, LocatorBorderConfig.WaypointColor source) {
+    public int getWaypointColor(TrackedWaypoint waypoint, LocatorBorderConfig.WaypointColor source) {
         return getOverrideColor(waypoint).orElseGet(() -> switch (source) {
             case Waypoint -> waypoint.icon().color.orElseGet(() ->
                     waypoint.id().map(

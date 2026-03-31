@@ -41,6 +41,10 @@ public class LocatorBorderConfig implements ConfigData {
     @ConfigEntry.Gui.CollapsibleObject
     public CardinalDirections compass = new CardinalDirections();
 
+    @ConfigEntry.Gui.Tooltip
+    @ConfigEntry.Category("miscellaneous")
+    public boolean forceWaypoints = false;
+
     @ConfigEntry.Category("miscellaneous")
     public boolean animations = true;
 

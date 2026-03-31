@@ -49,5 +49,7 @@
   "text.autoconfig.locator_border.option.compass.enabled.@Tooltip": "Render cardinal directions (N, S, E, W)",
   "text.autoconfig.locator_border.option.compass.showIntercardinal": "Intercardinal",
   "text.autoconfig.locator_border.option.compass.showIntercardinal.@Tooltip": "Render intercardinal directions (NE, SE, SW, NW)",
+  "text.autoconfig.locator_border.option.forceWaypoints": "Force Waypoints",
+  "text.autoconfig.locator_border.option.forceWaypoints.@Tooltip": "Render waypoints (only players within distance) even if the server has the locator bar disabled",
   "text.autoconfig.locator_border.option.animations": "Enable Animations"
 }

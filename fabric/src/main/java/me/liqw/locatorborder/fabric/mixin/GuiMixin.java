@@ -23,13 +23,13 @@ public abstract class GuiMixin {
     @Unique private LocatorBarRenderer renderer;
 
     @ModifyVariable(method = "nextContextualInfoState", at = @At("STORE"), name = "canShowLocatorInfo")
-    private boolean forceLocatorStateOff(boolean original) {
+    public boolean forceLocatorStateOff(boolean original) {
         if (LocatorBorder.getConfig().enabled) return false;
         return original;
     }
 
     @Inject(method = "extractHotbarAndDecorations", at = @At("TAIL"))
-    private void renderLocatorBorder(GuiGraphicsExtractor graphics, DeltaTracker delta, CallbackInfo ci) {
+    public void renderLocatorBorder(GuiGraphicsExtractor graphics, DeltaTracker delta, CallbackInfo ci) {
         LocatorBorderConfig config = LocatorBorder.getConfig();
 
         if (config.enabled && this.minecraft.player != null && this.minecraft.player.connection.getWaypointManager().hasWaypoints()) {
@@ -42,7 +42,7 @@ public abstract class GuiMixin {
     }
 
     @Inject(method = "extractRenderState", at = @At("TAIL"))
-    private void renderCardinalDirections(GuiGraphicsExtractor graphics, DeltaTracker delta, CallbackInfo ci) {
+    public void renderCardinalDirections(GuiGraphicsExtractor graphics, DeltaTracker delta, CallbackInfo ci) {
         LocatorBorderConfig config = LocatorBorder.getConfig();
 
         if (!config.enabled || this.minecraft.options.hideGui || !config.compass.enabled) return;

@@ -4,8 +4,9 @@
   "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",
   "client": [
-    "LocatorBarRendererMixin",
-    "GuiMixin"
+    "ClientWaypointManagerMixin",
+    "GuiMixin",
+    "LocatorBarRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
