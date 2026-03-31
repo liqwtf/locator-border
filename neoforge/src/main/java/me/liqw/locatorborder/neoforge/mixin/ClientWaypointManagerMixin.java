@@ -31,9 +31,11 @@ public abstract class ClientWaypointManagerMixin {
         if (!LocatorBorder.getConfig().forceWaypoints || !(fromEntity.level() instanceof ClientLevel level)) return;
 
         for (AbstractClientPlayer player : level.players()) {
-            if (player == Minecraft.getInstance().player) continue;
-
             UUID uuid = player.getUUID();
+
+            if (player == fromEntity || player.isInvisible() || uuid.version() != 4
+                    || Minecraft.getInstance().getConnection().getPlayerInfo(uuid) == null) continue;
+
             Either<UUID, String> id = Either.left(uuid);
             TrackedWaypoint existing = waypoints.get(id);
 
