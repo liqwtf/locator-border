@@ -2,11 +2,13 @@ package me.liqw.locatorborder.fabric.mixin;
 
 import com.mojang.datafixers.util.Either;
 import me.liqw.locatorborder.LocatorBorder;
+import me.liqw.locatorborder.config.LocatorBorderConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.waypoints.ClientWaypointManager;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.waypoints.TrackedWaypoint;
 import net.minecraft.world.waypoints.Waypoint;
 import org.spongepowered.asm.mixin.Final;
@@ -28,28 +30,32 @@ public abstract class ClientWaypointManagerMixin {
 
     @Inject(method = "forEachWaypoint", at = @At("HEAD"))
     private void populateWaypointsMap(Entity fromEntity, Consumer<TrackedWaypoint> consumer, CallbackInfo ci) {
-        if (!LocatorBorder.getConfig().forceWaypoints || !(fromEntity.level() instanceof ClientLevel level)) return;
+        if (!(fromEntity.level() instanceof ClientLevel level)) return;
 
-        for (AbstractClientPlayer player : level.players()) {
-            UUID uuid = player.getUUID();
+        LocatorBorderConfig config = LocatorBorder.getConfig();
 
-            if (player == fromEntity || player.isInvisible() || uuid.version() != 4
-                    || Minecraft.getInstance().getConnection().getPlayerInfo(uuid) == null) continue;
+        if (config.forceWaypoints) {
+            ClientPacketListener connection = Minecraft.getInstance().getConnection();
 
-            Either<UUID, String> id = Either.left(uuid);
-            TrackedWaypoint existing = waypoints.get(id);
+            for (Player player : level.players()) {
+                if (player == fromEntity || player.isInvisible()) continue;
 
-            TrackedWaypoint updatedData = TrackedWaypoint.setPosition(uuid, Waypoint.Icon.NULL, player.blockPosition());
+                UUID uuid = player.getUUID();
+                if (uuid.version() != 4 || (connection != null ? connection.getPlayerInfo(uuid) : null) == null) continue;
 
-            if (existing == null) {
-                this.trackWaypoint(updatedData);
-            } else {
-                existing.update(updatedData);
+                Either<UUID, String> key = Either.left(uuid);
+                TrackedWaypoint existing = waypoints.get(key);
+
+                if (existing == null) {
+                    this.trackWaypoint(TrackedWaypoint.setPosition(uuid, Waypoint.Icon.NULL, player.blockPosition()));
+                } else {
+                    existing.update(TrackedWaypoint.setPosition(uuid, Waypoint.Icon.NULL, player.blockPosition()));
+                }
             }
         }
 
         waypoints.values().removeIf(waypoint ->
-                waypoint.id().left().filter(uuid -> level.getPlayerByUUID(uuid) == null).isPresent()
+                waypoint.id().left().map(uuid -> !config.forceWaypoints || level.getPlayerByUUID(uuid) == null).orElse(false)
         );
     }
 
