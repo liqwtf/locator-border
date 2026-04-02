@@ -1,4 +1,4 @@
-package me.liqw.locatorborder.fabric.mixin;
+package me.liqw.locatorborder.mixin;
 
 import com.mojang.datafixers.util.Either;
 import me.liqw.locatorborder.LocatorBorder;
@@ -32,6 +32,8 @@ public abstract class ClientWaypointManagerMixin {
     private void populateWaypointsMap(Entity fromEntity, Consumer<TrackedWaypoint> consumer, CallbackInfo ci) {
         if (!(fromEntity.level() instanceof ClientLevel level)) return;
 
+        LocatorBorder.LOGGER.info("forEachWaypoint ran");
+
         LocatorBorderConfig config = LocatorBorder.getConfig();
 
         if (config.forceWaypoints) {
@@ -45,11 +47,12 @@ public abstract class ClientWaypointManagerMixin {
 
                 Either<UUID, String> key = Either.left(uuid);
                 TrackedWaypoint existing = waypoints.get(key);
+                TrackedWaypoint waypoint = TrackedWaypoint.setPosition(uuid, Waypoint.Icon.NULL, player.blockPosition());
 
                 if (existing == null) {
-                    this.trackWaypoint(TrackedWaypoint.setPosition(uuid, Waypoint.Icon.NULL, player.blockPosition()));
+                    this.trackWaypoint(waypoint);
                 } else {
-                    existing.update(TrackedWaypoint.setPosition(uuid, Waypoint.Icon.NULL, player.blockPosition()));
+                    existing.update(waypoint);
                 }
             }
         }

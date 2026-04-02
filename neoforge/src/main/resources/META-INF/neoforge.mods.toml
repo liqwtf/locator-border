@@ -1,6 +1,6 @@
 modLoader = "javafml"
 loaderVersion = "[2,)"
-#issueTrackerURL = ""
+issueTrackerURL = "https://github.com/liqwtf/locator-border/issues"
 license = "MIT"
 
 [[mods]]
@@ -27,6 +27,8 @@ versionRange = "[26.1,)"
 ordering = "NONE"
 side = "CLIENT"
 
+[[mixins]]
+config = "locator-border-neoforge.mixins.json"
 
 [[mixins]]
 config = "locator-border.mixins.json"

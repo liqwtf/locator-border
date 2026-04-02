@@ -8,7 +8,8 @@
     "liqw"
   ],
   "contact": {
-    "homepage": ""
+    "sources": "https://github.com/liqwtf/locator-border",
+    "issues": "https://github.com/liqwtf/locator-border/issues"
   },
   "license": "MIT",
   "icon": "icon.png",
@@ -22,6 +23,7 @@
     ]
   },
   "mixins": [
+    "locator-border-fabric.mixins.json",
     "locator-border.mixins.json"
   ],
   "depends": {

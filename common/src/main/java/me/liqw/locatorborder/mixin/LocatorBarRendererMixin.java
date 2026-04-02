@@ -1,4 +1,4 @@
-package me.liqw.locatorborder.neoforge.mixin;
+package me.liqw.locatorborder.mixin;
 
 import me.liqw.locatorborder.LocatorBorder;
 import me.liqw.locatorborder.config.LocatorBorderConfig;

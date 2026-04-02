@@ -32,6 +32,8 @@ public abstract class GuiMixin {
     public void renderLocatorBorder(GuiGraphicsExtractor graphics, DeltaTracker delta, CallbackInfo ci) {
         LocatorBorderConfig config = LocatorBorder.getConfig();
 
+        LocatorBorder.LOGGER.info("render locator border ran");
+
         if (config.enabled && this.minecraft.player != null && this.minecraft.player.connection.getWaypointManager().hasWaypoints()) {
             if (this.renderer == null) {
                 this.renderer = new LocatorBarRenderer(this.minecraft);

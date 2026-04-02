@@ -7,8 +7,8 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'locator-border'
+rootProject.name = "locator-border"
 
-include 'common'
-include 'fabric'
-include 'neoforge'
+include "common"
+include "fabric"
+include "neoforge"

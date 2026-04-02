@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "me.liqw.locatorborder.fabric.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "minVersion": "0.8",
+  "client": [
+    "GuiMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

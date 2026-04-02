@@ -1,12 +1,10 @@
 {
   "required": true,
   "package": "me.liqw.locatorborder.neoforge.mixin",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_25",
   "minVersion": "0.8",
   "client": [
-    "ClientWaypointManagerMixin",
-    "GuiMixin",
-    "LocatorBarRendererMixin"
+    "GuiMixin"
   ],
   "injectors": {
     "defaultRequire": 1

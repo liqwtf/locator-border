@@ -1,11 +1,10 @@
 {
   "required": true,
-  "package": "me.liqw.locatorborder.fabric.mixin",
-  "compatibilityLevel": "JAVA_21",
+  "package": "me.liqw.locatorborder.mixin",
+  "compatibilityLevel": "JAVA_25",
   "minVersion": "0.8",
   "client": [
     "ClientWaypointManagerMixin",
-    "GuiMixin",
     "LocatorBarRendererMixin"
   ],
   "injectors": {
