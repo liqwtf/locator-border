@@ -1,13 +1,25 @@
-![Locator Border](https://raw.githubusercontent.com/liqwtf/locator-border/refs/heads/master/assets/banner.png)
+# Stonecutter Fabric template
+## Setup
+1. Review the supported Minecraft versions in `settings.gradle.kts`.
+   For new entries, add `versions/.../gradle.properties` with the same keys as other versions.
+2. Change `mod.group`, `mod.id` and `mod.name` properties in `gradle.properties`.
+3. Rename `com.example` package in `src/main/java`.
+4. Rename `src/main/resources/template.mixins.json` to use your mod's id.
+5. Review the `LICENSE` file. 
+   See the [license decision diagram](https://docs.codeberg.org/getting-started/licensing/#license-decision-diagram) for common options.
+6. Review `src/main/resources/fabric.mod.json` to have up-to-date properties.
 
-<p align="center"><b>Locator Border</b> is a client-side mod that moves player waypoints off the locator bar and onto the edges of your screen. Your experience bar stays visible, your HUD stays clean, and you always know where everyone is.</p>
+## Usage
+- Use `"Set active project to ..."` Gradle tasks to update the Minecraft version
+  available in `src/` classes.
+- Use `buildAndCollect` Gradle task to store mod releases in `build/libs/`.
+- Enable `mod-publish-plugin` in `stonecutter.gradle.kts` and `build.gradle.kts`
+  and the corresponding code blocks to publish releases to Modrinth and Curseforge.
+- Enable `maven-publish` in `build.gradle.kts` and the corresponding code block
+  to publish releases to a personal maven repository.
 
----
-
-## Features
-
-### Off-screen indicators
-See where players are, wherever they are. Waypoints are projected to the edge of the screen instead of obstructing the experience bar. Each waypoint can also be focused, causing it to be pulled inward to the center of the screen and scales however you like. Additional labels can also be added to each waypoint, such as player name and distance.
-
-### Configuration
-Pretty much everything is configurable. Render waypoints as player skin faces, give a specific player their own custom color, keep someone permanently focused, or throw a compass in on the HUD among the waypoints, so you always know which way is north.
+## Useful links
+- [Stonecutter beginner's guide](https://stonecutter.kikugie.dev/wiki/start/): *spoiler: you* ***need*** *to understand how it works!*
+- [Fabric Discord server](https://discord.gg/v6v4pMv): for mod development help.
+- [Stonecutter Discord server](https://discord.kikugie.dev/): for Stonecutter and Gradle help.
+- [How To Ask Questions - the guide](http://www.catb.org/esr/faqs/smart-questions.html): also in [video form](https://www.youtube.com/results?search_query=How+To+Ask+Questions+The+Smart+Way).

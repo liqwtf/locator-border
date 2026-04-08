@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "dev.liqw.locatorborder.mixin",
+  "compatibilityLevel": "${java}",
+  "mixins": [
+    "ClientWaypointManagerMixin",
+    "GuiMixin",
+    "LocatorBarRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
