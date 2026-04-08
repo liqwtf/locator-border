@@ -4,6 +4,7 @@ import dev.kikugie.stonecutter.StonecutterExperimentalAPI
 
 plugins {
     id("dev.kikugie.loom-back-compat")
+    id("me.modmuss50.mod-publish-plugin")
 }
 
 version = "${property("mod.version")}+${sc.current.version}-fabric"
@@ -102,5 +103,43 @@ tasks {
         from(loomx.modJar.map { it.archiveFile }, loomx.modSourcesJar.map { it.archiveFile })
         into(rootProject.layout.buildDirectory.file("libs/${project.property("mod.version")}"))
         dependsOn("build")
+    }
+}
+
+publishMods {
+    val token = object {
+        val modrinth = findProperty("MODRINTH_TOKEN") as? String
+        val curseforge = findProperty("CURSEFORGE_TOKEN") as? String
+    }
+
+    dryRun = token.modrinth == null || token.curseforge == null
+
+    file = loomx.modJar.map { it.archiveFile.get() }
+    additionalFiles.from(loomx.modSourcesJar.map { it.archiveFile.get() })
+    displayName = "${property("mod.name")} ${property("mod.version")} for ${sc.current.version} Fabric"
+    version = "${property("mod.version")}+${sc.current.version}-fabric"
+    changelog = rootProject.file("CHANGELOG.md").readText()
+    type = STABLE
+    modLoaders.add("fabric")
+
+    modrinth {
+        projectId = property("publish.modrinth") as String
+//        projectDescription = rootProject.file("README.md").readText()
+        minecraftVersions.addAll(compatibleVersions)
+        requires("fabric-api", "cloth-config")
+        optional("modmenu")
+
+        accessToken = token.modrinth
+    }
+
+    curseforge {
+        projectId = property("publish.curseforge") as String
+        minecraftVersions.addAll(compatibleVersions)
+        javaVersions.add(requiredJava)
+        clientRequired = true
+        requires("fabric-api", "cloth-config")
+        optional("modmenu")
+
+        accessToken = token.curseforge
     }
 }

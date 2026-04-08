@@ -7,6 +7,9 @@ mod.version = "1.2.3"
 deps.fabric_loader = "0.18.6"
 loomx.loom_version = "1.15-SNAPSHOT"
 
+publish.modrinth = "GFeIwdiw"
+publish.curseforge = "1491934"
+
 ["26.1-fabric"]
 mod.mc_compat = "~26.1"
 mod.mc_releases = ["26.1", "26.1.1"]
