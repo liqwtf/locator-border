@@ -3,11 +3,11 @@
 import dev.kikugie.stonecutter.StonecutterExperimentalAPI
 
 plugins {
-    id("dev.kikugie.loom-back-compat")
+    id("net.neoforged.moddev")
     id("me.modmuss50.mod-publish-plugin")
 }
 
-version = "${property("mod.version")}+${sc.current.version}-fabric"
+version = "${property("mod.version")}+${sc.current.version}-neoforge"
 base.archivesName = property("mod.id") as String
 
 val requiredJava: JavaVersion = when {
@@ -31,35 +31,27 @@ repositories {
     strictMaven("https://www.cursemaven.com", "CurseForge", "curse.maven")
     strictMaven("https://api.modrinth.com/maven", "Modrinth", "maven.modrinth")
 
-    maven("https://maven.terraformersmc.com/releases") { name = "Terraformers" } // Mod Menu
     maven("https://maven.shedaniel.me") { name = "shedaniel" } // Cloth Config
 }
 
 dependencies {
-    fun fapi(vararg modules: String) {
-        for (it in modules) modImplementation(fabricApi.module(it, sc.properties["deps.fabric_api"]))
-    }
-
-    minecraft("com.mojang:minecraft:${sc.current.version}")
-    loomx.applyMojangMappings() // Applies mappings to obfuscated versions
-
-    modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
-    fapi("fabric-lifecycle-events-v1", "fabric-resource-loader-v0", "fabric-content-registries-v0")
-
-    modImplementation("me.shedaniel.cloth:cloth-config-fabric:${property("deps.cloth_config")}")
-    modImplementation("com.terraformersmc:modmenu:${property("deps.mod_menu")}")
+    implementation("me.shedaniel.cloth:cloth-config-neoforge:${property("deps.cloth_config")}")
 }
 
-loom {
-    fabricModJsonPath = rootProject.file("src/main/resources/fabric.mod.json") // Useful for interface injection
+neoForge {
+    version = property("deps.neoforge") as String
 
-    decompilerOptions.named("vineflower") {
-        options.put("mark-corresponding-synthetics", "1") // Adds names to lambdas - useful for mixins
+    runs {
+        register("client") {
+            gameDirectory = file("../../run/")
+            client()
+        }
     }
 
-    runConfigs.all {
-        vmArgs("-Dmixin.debug.export=true")
-        runDir = "../../run"
+    mods {
+        register(property("mod.id") as String) {
+            sourceSet(sourceSets["main"])
+        }
     }
 }
 
@@ -76,7 +68,7 @@ java {
 
 tasks {
     processResources {
-        exclude("**/neoforge.mods.toml")
+        exclude("**/fabric.mod.json")
 
         fun MutableMap<String, String>.register(key: String, property: String) {
             val value: String = sc.properties[property]
@@ -88,25 +80,30 @@ tasks {
             register("id", "mod.id")
             register("name", "mod.name")
             register("version", "mod.version")
-            register("minecraft", "mod.mc_compat")
+            register("minecraft", "mod.minecraft")
         }
 
-        filesMatching("fabric.mod.json") { expand(props) }
+        filesMatching("META-INF/neoforge.mods.toml") { expand(props) }
 
         val mixinJava = "JAVA_${requiredJava.majorVersion}"
         filesMatching("*.mixins.json") { expand("java" to mixinJava) }
     }
+
+//    named("createMinecraftArtifacts") {
+//        dependsOn("stonecutterGenerate")
+//    }
 
     // Builds the version into a shared folder in `build/libs/${mod version}/`
     register<Copy>("buildAndCollect") {
         group = "build"
 
         // loomx.mod(Sources)Jar returns the jar task for the applied loom variant
-        from(loomx.modJar.map { it.archiveFile }, loomx.modSourcesJar.map { it.archiveFile })
+        from(jar.map { it.archiveFile })
         into(rootProject.layout.buildDirectory.file("libs/${project.property("mod.version")}"))
         dependsOn("build")
     }
 }
+
 
 publishMods {
     val token = object {
@@ -116,20 +113,18 @@ publishMods {
 
     dryRun = token.modrinth == null || token.curseforge == null
 
-    file = loomx.modJar.map { it.archiveFile.get() }
-    additionalFiles.from(loomx.modSourcesJar.map { it.archiveFile.get() })
-    displayName = "${property("mod.name")} ${property("mod.version")} for ${sc.current.version} Fabric"
-    version = "${property("mod.version")}+${sc.current.version}-fabric"
+    file = tasks.jar.map { it.archiveFile.get() }
+    //additionalFiles.from(tasks.sourcesJar.map { it.archiveFile.get() })
+    displayName = "${property("mod.name")} ${property("mod.version")} for ${sc.current.version} NeoForge"
+    version = "${property("mod.version")}+${sc.current.version}-neoforge"
     changelog = rootProject.file("CHANGELOG.md").readText()
     type = STABLE
-    modLoaders.add("fabric")
+    modLoaders.add("neoforge")
 
     modrinth {
         projectId = property("publish.modrinth") as String
-//        projectDescription = rootProject.file("README.md").readText()
         minecraftVersions.addAll(compatibleVersions)
-        requires("fabric-api", "cloth-config")
-        optional("modmenu")
+        requires("cloth-config")
 
         accessToken = token.modrinth
     }
@@ -139,8 +134,7 @@ publishMods {
         minecraftVersions.addAll(compatibleVersions)
         javaVersions.add(requiredJava)
         clientRequired = true
-        requires("fabric-api", "cloth-config")
-        optional("modmenu")
+        requires("cloth-config")
 
         accessToken = token.curseforge
     }

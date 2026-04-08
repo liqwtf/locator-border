@@ -1,0 +1,25 @@
+license = "MIT"
+
+modLoader="javafml"
+loaderVersion="[2,)"
+
+[[mods]]
+modId = "locator_border"
+displayName = "${name}"
+version = "${version}"
+authors = "liqw"
+description = "This is an example description! Tell everyone what your mod is about!"
+
+logoFile = "assets/locator-border/icon.png"
+#displayURL = "..."
+#issueTrackerUrl = "..."
+
+[[mixings]]
+config = "locator-border.mixins.json"
+
+[[dependencies.locator_border]]
+modId = "minecraft"
+type = "required"
+versionRange = "${minecraft}"
+ordering = "NONE"
+side = "CLIENT"

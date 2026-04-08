@@ -7,7 +7,7 @@ import dev.liqw.locatorborder.util.WaypointIcon;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.contextualbar.LocatorBarRenderer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -27,8 +27,8 @@ public abstract class LocatorBarRendererMixin {
     @Shadow @Final private Minecraft minecraft;
 
     //~ if <26 'extractRenderState' -> 'render'
-    @Inject(method = "extractRenderState", at = @At("HEAD"), cancellable = true)
-    public void onRender(GuiGraphicsExtractor graphics, DeltaTracker delta, CallbackInfo ci) {
+    @Inject(method = "render", at = @At("HEAD"), cancellable = true)
+    public void onRender(GuiGraphics graphics, DeltaTracker delta, CallbackInfo ci) {
         LocatorBorderConfig config = LocatorBorder.getConfig();
 
         if (!config.enabled) return;
@@ -61,8 +61,8 @@ public abstract class LocatorBarRendererMixin {
     }
 
     //~ if <26 'extractBackground' -> 'renderBackground'
-    @Inject(method = "extractBackground", at = @At("HEAD"), cancellable = true)
-    public void onRenderBackground(GuiGraphicsExtractor graphics, DeltaTracker delta, CallbackInfo ci) {
+    @Inject(method = "renderBackground", at = @At("HEAD"), cancellable = true)
+    public void onRenderBackground(GuiGraphics graphics, DeltaTracker delta, CallbackInfo ci) {
         if (LocatorBorder.getConfig().enabled) ci.cancel();
     }
 }

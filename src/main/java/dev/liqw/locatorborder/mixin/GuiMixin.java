@@ -8,7 +8,7 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.contextualbar.LocatorBarRenderer;
 import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.*;
@@ -22,16 +22,24 @@ public abstract class GuiMixin {
     @Shadow @Final private Minecraft minecraft;
     @Unique private LocatorBarRenderer renderer;
 
-    //~ if <26 '"canShowLocatorInfo"' -> '"bl"'
-    @ModifyVariable(method = "nextContextualInfoState", at = @At("STORE"), name = "canShowLocatorInfo")
+    //? if fabric {
+    /*//~ if <26 '"canShowLocatorInfo"' -> '"bl"'
+    @ModifyVariable(method = "nextContextualInfoState", at = @At("STORE"), name = "bl")
+    *///? } else {
+    //~ if <26 '"canShowLocatorInfo"' -> '"flag"'
+    @ModifyVariable(method = "nextContextualInfoState", at = @At("STORE"), name = "flag")
+    //? }
     public boolean forceLocatorStateOff(boolean original) {
         if (LocatorBorder.getConfig().enabled) return false;
         return original;
     }
 
-    //~ if <26 'extractHotbarAndDecorations' -> 'renderHotbarAndDecorations'
-    @Inject(method = "extractHotbarAndDecorations", at = @At("TAIL"))
-    public void renderLocatorBorder(GuiGraphicsExtractor graphics, DeltaTracker delta, CallbackInfo ci) {
+    //? fabric {
+    /*//~ if <26 'extractHotbarAndDecorations' -> 'renderHotbarAndDecorations'
+    @Inject(method = "renderHotbarAndDecorations", at = @At("TAIL"))
+    *///? } else
+    @Inject(method = "renderContextualInfoBar", at = @At("HEAD"), cancellable = true)
+    public void renderLocatorBorder(GuiGraphics graphics, DeltaTracker delta, CallbackInfo ci) {
         LocatorBorderConfig config = LocatorBorder.getConfig();
 
         if (config.enabled && this.minecraft.player != null && this.minecraft.player.connection.getWaypointManager().hasWaypoints()) {
@@ -40,13 +48,13 @@ public abstract class GuiMixin {
             }
 
             //~ if <26 'renderer.extractRenderState' -> 'renderer.render'
-            this.renderer.extractRenderState(graphics, delta);
+            this.renderer.render(graphics, delta);
         }
     }
 
     //~ if <26 'extractRenderState' -> 'render'
-    @Inject(method = "extractRenderState", at = @At("TAIL"))
-    public void renderCardinalDirections(GuiGraphicsExtractor graphics, DeltaTracker delta, CallbackInfo ci) {
+    @Inject(method = "render", at = @At("TAIL"))
+    public void renderCardinalDirections(GuiGraphics graphics, DeltaTracker delta, CallbackInfo ci) {
         LocatorBorderConfig config = LocatorBorder.getConfig();
 
         if (!config.enabled || this.minecraft.options.hideGui || !config.compass.enabled) return;
@@ -64,7 +72,7 @@ public abstract class GuiMixin {
 
             bounds.project(point.angle() - yaw, (g, state) -> {
                 //~ if <26 'centeredText' -> 'drawCenteredString'
-                g.centeredText(font, point.label(), 0, -font.lineHeight / 2, state.setAlpha(point.getColor()));
+                g.drawCenteredString(font, point.label(), 0, -font.lineHeight / 2, state.setAlpha(point.getColor()));
             });
         }
     }

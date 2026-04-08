@@ -6,18 +6,32 @@ import dev.liqw.locatorborder.config.LocatorBorderConfig;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
-import net.fabricmc.api.ClientModInitializer;
-
 import net.minecraft.world.InteractionResult;
+
+//? fabric
+//import net.fabricmc.api.ClientModInitializer;
+
+//? neoforge {
+import me.shedaniel.autoconfig.AutoConfigClient;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+//? }
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LocatorBorder implements ClientModInitializer {
-    public static final String MOD_ID = /*$ mod_id*/ "locator-border";
+//? neoforge
+@Mod("locator_border")
+public class LocatorBorder /*? fabric { */ /*implements ClientModInitializer *//*? } */ {
+    public static final String MOD_ID = "locator-border";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-    @Override
+    //? fabric {
+    /*@Override
     public void onInitializeClient() {
+    *///? } else
+    public LocatorBorder () {
         ConfigHolder<LocatorBorderConfig> holder = AutoConfig.register(LocatorBorderConfig.class, GsonConfigSerializer::new);
 
         // temp fix, validatePostLoad isn't called when saving
@@ -25,6 +39,12 @@ public class LocatorBorder implements ClientModInitializer {
             config.validatePostLoad();
             return InteractionResult.SUCCESS;
         }));
+
+        //? neoforge {
+        ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory.class, () ->
+                (client, parent) -> AutoConfigClient.getConfigScreen(LocatorBorderConfig.class, parent).get()
+        );
+        //? }
     }
 
     public static LocatorBorderConfig getConfig() {

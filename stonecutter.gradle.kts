@@ -1,9 +1,10 @@
 plugins {
     id("dev.kikugie.stonecutter")
+    id("net.neoforged.moddev") version "2.0.140" apply false
     id("me.modmuss50.mod-publish-plugin") version "1.0.+" apply false
 }
 
-stonecutter active "26.1-fabric"
+stonecutter active "1.21.11-neoforge"
 
 stonecutter tasks {
     order("publishModrinth")
@@ -11,8 +12,9 @@ stonecutter tasks {
 }
 
 stonecutter parameters {
-    swaps["mod_id"] = "\"${property("mod.id")}\";"
-    dependencies["fapi"] = node.project.property("deps.fabric_api") as String
+    constants {
+        match(node.metadata.project.substringAfterLast('-'), "fabric", "neoforge")
+    }
 
     replacements {
         string(current.parsed < "26.0") {
