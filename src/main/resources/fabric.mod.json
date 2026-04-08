@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
+  "name": "Locator Border",
   "id": "locator-border",
   "version": "${version}",
-  "name": "Locator Border",
   "description": "Moves the pesky locator bar to the border of the screen, out of sight!",
   "authors": [
     "liqw"

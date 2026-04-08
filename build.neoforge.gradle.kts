@@ -77,8 +77,6 @@ tasks {
         }
 
         val props = buildMap {
-            register("id", "mod.id")
-            register("name", "mod.name")
             register("version", "mod.version")
             register("minecraft", "mod.minecraft")
         }

@@ -4,11 +4,11 @@ modLoader="javafml"
 loaderVersion="[2,)"
 
 [[mods]]
+displayName = "Locator Border"
 modId = "locator_border"
-displayName = "${name}"
 version = "${version}"
 authors = "liqw"
-description = "This is an example description! Tell everyone what your mod is about!"
+description = "Moves the pesky locator bar to the border of the screen, out of sight!"
 
 logoFile = "assets/locator-border/icon.png"
 #displayURL = "..."
