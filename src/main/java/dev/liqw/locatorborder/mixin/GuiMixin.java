@@ -22,13 +22,7 @@ public abstract class GuiMixin {
     @Shadow @Final private Minecraft minecraft;
     @Unique private LocatorBarRenderer renderer;
 
-    //? if fabric {
-    //~ if <26 '"canShowLocatorInfo"' -> '"bl"'
-    @ModifyVariable(method = "nextContextualInfoState", at = @At("STORE"), name = "canShowLocatorInfo")
-    //? } else {
-    /*//~ if <26 '"canShowLocatorInfo"' -> '"flag"'
-    @ModifyVariable(method = "nextContextualInfoState", at = @At("STORE"), name = "canShowLocatorInfo")
-    *///? }
+    @ModifyVariable(method = "nextContextualInfoState", at = @At("STORE"), ordinal = 0)
     public boolean forceLocatorStateOff(boolean original) {
         if (LocatorBorder.getConfig().enabled) return false;
         return original;
