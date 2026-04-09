@@ -1,7 +1,7 @@
 package dev.liqw.locatorborder.config;
 
 //? fabric {
-/*import com.terraformersmc.modmenu.api.ConfigScreenFactory;
+import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import me.shedaniel.autoconfig.AutoConfigClient;
 
@@ -11,4 +11,4 @@ public class ModMenuIntegration implements ModMenuApi {
         return parent -> AutoConfigClient.getConfigScreen(LocatorBorderConfig.class, parent).get();
     }
 }
-*///? }
+//? }

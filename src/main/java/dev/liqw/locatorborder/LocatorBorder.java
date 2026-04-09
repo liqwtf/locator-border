@@ -9,22 +9,22 @@ import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.minecraft.world.InteractionResult;
 
 //? fabric
-//import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.ClientModInitializer;
 
 //? neoforge {
-//~ if <=1.21.10 'AutoConfigClient' -> 'AutoConfig'
+/*//~ if <=1.21.10 'AutoConfigClient' -> 'AutoConfig'
 import me.shedaniel.autoconfig.AutoConfigClient;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
-//? }
+*///? }
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 //? neoforge
-@Mod("locator_border")
-public class LocatorBorder /*? fabric { */ /*implements ClientModInitializer *//*? } */ {
+//@Mod("locator_border")
+public class LocatorBorder /*? fabric { */ implements ClientModInitializer /*? } */ {
     public static final String MOD_ID = "locator-border";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
@@ -39,14 +39,14 @@ public class LocatorBorder /*? fabric { */ /*implements ClientModInitializer *//
     }
 
     //? fabric {
-    /*@Override
+    @Override
     public void onInitializeClient() {
         initialize();
     }
-    *///? }
+    //? }
 
     //? neoforge {
-    public LocatorBorder() {
+    /*public LocatorBorder() {
         initialize();
 
         ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory.class, () ->
@@ -54,7 +54,7 @@ public class LocatorBorder /*? fabric { */ /*implements ClientModInitializer *//
                 (client, parent) -> AutoConfigClient.getConfigScreen(LocatorBorderConfig.class, parent).get()
         );
     }
-    //? }
+    *///? }
 
     public static LocatorBorderConfig getConfig() {
         return AutoConfig.getConfigHolder(LocatorBorderConfig.class).getConfig();

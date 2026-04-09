@@ -110,7 +110,7 @@ publishMods {
     dryRun = token.modrinth == null || token.curseforge == null
 
     file = tasks.jar.map { it.archiveFile.get() }
-    additionalFiles.from(tasks.getByName("sourceJar"))
+    //additionalFiles.from(project.tasks.getByName("sourceJar"))
     displayName = "Locator Border ${property("mod.version")} for ${sc.current.version} NeoForge"
     version = "${property("mod.version")}+${sc.current.version}-neoforge"
     changelog = rootProject.file("CHANGELOG.md").readText()
