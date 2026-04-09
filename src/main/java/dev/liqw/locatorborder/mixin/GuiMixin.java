@@ -23,22 +23,22 @@ public abstract class GuiMixin {
     @Unique private LocatorBarRenderer renderer;
 
     //? if fabric {
-    //~ if <26 '"canShowLocatorInfo"' -> '"bl"'
+    /*//~ if <26 '"canShowLocatorInfo"' -> '"bl"'
     @ModifyVariable(method = "nextContextualInfoState", at = @At("STORE"), name = "canShowLocatorInfo")
-    //? } else {
-    /*//~ if <26 '"canShowLocatorInfo"' -> '"flag"'
+    *///? } else {
+    //~ if <26 '"canShowLocatorInfo"' -> '"flag"'
     @ModifyVariable(method = "nextContextualInfoState", at = @At("STORE"), name = "canShowLocatorInfo")
-    *///? }
+    //? }
     public boolean forceLocatorStateOff(boolean original) {
         if (LocatorBorder.getConfig().enabled) return false;
         return original;
     }
 
     //? fabric {
-    //~ if <26 'extractHotbarAndDecorations' -> 'renderHotbarAndDecorations'
+    /*//~ if <26 'extractHotbarAndDecorations' -> 'renderHotbarAndDecorations'
     @Inject(method = "extractHotbarAndDecorations", at = @At("TAIL"))
-    //? } else
-    //@Inject(method = "renderContextualInfoBar", at = @At("HEAD"), cancellable = true)
+    *///? } else
+    @Inject(method = "renderContextualInfoBar", at = @At("HEAD"), cancellable = true)
     public void renderLocatorBorder(GuiGraphicsExtractor graphics, DeltaTracker delta, CallbackInfo ci) {
         LocatorBorderConfig config = LocatorBorder.getConfig();
 

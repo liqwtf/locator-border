@@ -4,16 +4,21 @@ plugins {
     id("me.modmuss50.mod-publish-plugin") version "1.0.+" apply false
 }
 
-stonecutter active "26.1-fabric"
+stonecutter active "26.1-neoforge"
 
 stonecutter tasks {
-    order("publishModrinth")
-    order("publishCurseforge")
+    val ordering = versionComparator
+        .thenComparingInt { if (it.metadata.project.endsWith("fabric")) 1 else 0 }
+
+    order("publishModrinth", ordering)
+    order("publishCurseforge", ordering)
+
 }
 
 stonecutter parameters {
     constants {
-        match(node.metadata.project.substringAfterLast('-'), "fabric", "neoforge")
+        val loader = node.metadata.project.substringAfterLast('-')
+        match(loader, "fabric", "neoforge")
     }
 
     replacements {

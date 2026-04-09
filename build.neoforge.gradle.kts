@@ -15,11 +15,11 @@ val requiredJava: JavaVersion = when {
     sc.current.parsed >= "1.20.5" -> JavaVersion.VERSION_21
     sc.current.parsed >= "1.18" -> JavaVersion.VERSION_17
     sc.current.parsed >= "1.17" -> JavaVersion.VERSION_16
-    else -> JavaVersion.VERSION_1_8
+    else -> JavaVersion.VERSION_21
 }
 
 // This can be used for publishing on Modrinth and Curseforge
-val compatibleVersions: List<String> = sc.properties.rawOrNull("mod", "mc_releases")
+val compatibleVersions: List<String> = sc.properties.rawOrNull("mod", "version_range")
     ?.asList().orEmpty().map { it.toString() }
 
 repositories {
@@ -35,11 +35,11 @@ repositories {
 }
 
 dependencies {
-    implementation("me.shedaniel.cloth:cloth-config-neoforge:${property("deps.cloth_config")}")
+    implementation("me.shedaniel.cloth:cloth-config-neoforge:${property("cloth_config_version")}")
 }
 
 neoForge {
-    version = property("deps.neoforge") as String
+    version = property("neoforge_version") as String
 
     runs {
         register("client") {
@@ -78,7 +78,7 @@ tasks {
 
         val props = buildMap {
             register("version", "mod.version")
-            register("minecraft", "mod.minecraft")
+            register("minecraft", "minecraft_version")
         }
 
         filesMatching("META-INF/neoforge.mods.toml") { expand(props) }
@@ -87,16 +87,14 @@ tasks {
         filesMatching("*.mixins.json") { expand("java" to mixinJava) }
     }
 
-//    named("createMinecraftArtifacts") {
-//        dependsOn("stonecutterGenerate")
-//    }
+    named("createMinecraftArtifacts") {
+        dependsOn("stonecutterGenerate")
+    }
 
-    // Builds the version into a shared folder in `build/libs/${mod version}/`
     register<Copy>("buildAndCollect") {
         group = "build"
 
-        // loomx.mod(Sources)Jar returns the jar task for the applied loom variant
-        from(jar.map { it.archiveFile })
+        from(jar.map { it.archiveFile }, project.tasks.getByName("sourcesJar"))
         into(rootProject.layout.buildDirectory.file("libs/${project.property("mod.version")}"))
         dependsOn("build")
     }
@@ -112,15 +110,15 @@ publishMods {
     dryRun = token.modrinth == null || token.curseforge == null
 
     file = tasks.jar.map { it.archiveFile.get() }
-    //additionalFiles.from(tasks.sourcesJar.map { it.archiveFile.get() })
-    displayName = "${property("mod.name")} ${property("mod.version")} for ${sc.current.version} NeoForge"
+    additionalFiles.from(tasks.getByName("sourceJar"))
+    displayName = "Locator Border ${property("mod.version")} for ${sc.current.version} NeoForge"
     version = "${property("mod.version")}+${sc.current.version}-neoforge"
     changelog = rootProject.file("CHANGELOG.md").readText()
     type = STABLE
     modLoaders.add("neoforge")
 
     modrinth {
-        projectId = property("publish.modrinth") as String
+        projectId = property("modrinth_id") as String
         minecraftVersions.addAll(compatibleVersions)
         requires("cloth-config")
 
@@ -128,7 +126,7 @@ publishMods {
     }
 
     curseforge {
-        projectId = property("publish.curseforge") as String
+        projectId = property("curseforge_id") as String
         minecraftVersions.addAll(compatibleVersions)
         javaVersions.add(requiredJava)
         clientRequired = true

@@ -19,7 +19,7 @@ val requiredJava: JavaVersion = when {
 }
 
 // This can be used for publishing on Modrinth and Curseforge
-val compatibleVersions: List<String> = sc.properties.rawOrNull("mod", "mc_releases")
+val compatibleVersions: List<String> = sc.properties.rawOrNull("mod", "version_range")
     ?.asList().orEmpty().map { it.toString() }
 
 repositories {
@@ -37,17 +37,17 @@ repositories {
 
 dependencies {
     fun fapi(vararg modules: String) {
-        for (it in modules) modImplementation(fabricApi.module(it, sc.properties["deps.fabric_api"]))
+        for (it in modules) modImplementation(fabricApi.module(it, sc.properties["fabric_api_version"]))
     }
 
     minecraft("com.mojang:minecraft:${sc.current.version}")
     loomx.applyMojangMappings() // Applies mappings to obfuscated versions
 
-    modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
+    modImplementation("net.fabricmc:fabric-loader:${property("fabric_loader_version")}")
     fapi("fabric-lifecycle-events-v1", "fabric-resource-loader-v0", "fabric-content-registries-v0")
 
-    modImplementation("me.shedaniel.cloth:cloth-config-fabric:${property("deps.cloth_config")}")
-    modImplementation("com.terraformersmc:modmenu:${property("deps.mod_menu")}")
+    modImplementation("me.shedaniel.cloth:cloth-config-fabric:${property("cloth_config_version")}")
+    modImplementation("com.terraformersmc:modmenu:${property("mod_menu_version")}")
 }
 
 loom {
@@ -86,7 +86,7 @@ tasks {
 
         val props = buildMap {
             register("version", "mod.version")
-            register("minecraft", "mod.mc_compat")
+            register("minecraft", "minecraft_version")
         }
 
         filesMatching("fabric.mod.json") { expand(props) }
@@ -95,11 +95,9 @@ tasks {
         filesMatching("*.mixins.json") { expand("java" to mixinJava) }
     }
 
-    // Builds the version into a shared folder in `build/libs/${mod version}/`
     register<Copy>("buildAndCollect") {
         group = "build"
 
-        // loomx.mod(Sources)Jar returns the jar task for the applied loom variant
         from(loomx.modJar.map { it.archiveFile }, loomx.modSourcesJar.map { it.archiveFile })
         into(rootProject.layout.buildDirectory.file("libs/${project.property("mod.version")}"))
         dependsOn("build")
@@ -116,14 +114,14 @@ publishMods {
 
     file = loomx.modJar.map { it.archiveFile.get() }
     additionalFiles.from(loomx.modSourcesJar.map { it.archiveFile.get() })
-    displayName = "${property("mod.name")} ${property("mod.version")} for ${sc.current.version} Fabric"
+    displayName = "Locator Border ${property("mod.version")} for ${sc.current.version} Fabric"
     version = "${property("mod.version")}+${sc.current.version}-fabric"
     changelog = rootProject.file("CHANGELOG.md").readText()
     type = STABLE
     modLoaders.add("fabric")
 
     modrinth {
-        projectId = property("publish.modrinth") as String
+        projectId = property("modrinth_id") as String
 //        projectDescription = rootProject.file("README.md").readText()
         minecraftVersions.addAll(compatibleVersions)
         requires("fabric-api", "cloth-config")
@@ -133,7 +131,7 @@ publishMods {
     }
 
     curseforge {
-        projectId = property("publish.curseforge") as String
+        projectId = property("curseforge_id") as String
         minecraftVersions.addAll(compatibleVersions)
         javaVersions.add(requiredJava)
         clientRequired = true

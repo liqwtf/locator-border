@@ -32,8 +32,6 @@ public abstract class ClientWaypointManagerMixin {
     private void populateWaypointsMap(Entity fromEntity, Consumer<TrackedWaypoint> consumer, CallbackInfo ci) {
         if (!(fromEntity.level() instanceof ClientLevel level)) return;
 
-        LocatorBorder.LOGGER.info("forEachWaypoint ran");
-
         LocatorBorderConfig config = LocatorBorder.getConfig();
 
         if (config.forceWaypoints) {
