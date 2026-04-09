@@ -43,7 +43,7 @@ dependencies {
     minecraft("com.mojang:minecraft:${sc.current.version}")
     loomx.applyMojangMappings() // Applies mappings to obfuscated versions
 
-    modImplementation("net.fabricmc:fabric-loader:${property("fabric_loader_version")}")
+    modImplementation("net.fabricmc:fabric-loader:${property("loader_version")}")
     fapi("fabric-lifecycle-events-v1", "fabric-resource-loader-v0", "fabric-content-registries-v0")
 
     modImplementation("me.shedaniel.cloth:cloth-config-fabric:${property("cloth_config_version")}")
@@ -89,7 +89,7 @@ tasks {
             register("description", "description")
             register("sources", "sources_url")
             register("issues", "issues_url")
-            register("loader", "fabric_loader_version")
+            register("loader", "loader_version")
             register("minecraft", "minecraft_version")
         }
 

@@ -39,7 +39,7 @@ dependencies {
 }
 
 neoForge {
-    version = property("neoforge_version") as String
+    version = property("loader_version") as String
 
     runs {
         register("client") {

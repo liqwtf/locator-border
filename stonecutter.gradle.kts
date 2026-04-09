@@ -16,10 +16,10 @@ stonecutter tasks {
 }
 
 stonecutter parameters {
-    constants {
-        val loader = node.metadata.project.substringAfterLast('-')
-        match(loader, "fabric", "neoforge")
-    }
+    val (version, loader) = current.project.split('-', limit = 2)
+
+    constants.match(loader, "fabric", "neoforge")
+    properties.tags(version, loader)
 
     replacements {
         string(current.parsed < "26.0") {
