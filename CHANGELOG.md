@@ -1,1 +1,2 @@
-- move to stonecutter for versioning
+- clean up code
+- properly migrated to neoforge for all versions

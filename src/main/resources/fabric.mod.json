@@ -2,14 +2,12 @@
   "schemaVersion": 1,
   "name": "Locator Border",
   "id": "locator-border",
+  "description": "${description}",
   "version": "${version}",
-  "description": "Moves the pesky locator bar to the border of the screen, out of sight!",
-  "authors": [
-    "liqw"
-  ],
+  "authors": [ "liqw" ],
   "contact": {
-    "sources": "https://github.com/liqwtf/locator-border",
-    "issues": "https://github.com/liqwtf/locator-border/issues"
+    "sources": "${sources}",
+    "issues": "${issues}"
   },
   "license": "MIT",
   "icon": "assets/locator-border/icon.png",
@@ -26,7 +24,7 @@
     "locator-border.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.17",
+    "fabricloader": ">=${loader}",
     "minecraft": "${minecraft}"
   }
 }

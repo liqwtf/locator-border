@@ -19,7 +19,7 @@ val requiredJava: JavaVersion = when {
 }
 
 // This can be used for publishing on Modrinth and Curseforge
-val compatibleVersions: List<String> = sc.properties.rawOrNull("mod", "version_range")
+val compatibleVersions: List<String> = sc.properties.rawOrNull("mod", "publish_versions")
     ?.asList().orEmpty().map { it.toString() }
 
 repositories {
@@ -84,12 +84,16 @@ tasks {
             set(key, value)
         }
 
-        val props = buildMap {
-            register("version", "mod.version")
+        val properties = buildMap {
+            put("version", project.version.toString())
+            register("description", "description")
+            register("sources", "sources_url")
+            register("issues", "issues_url")
+            register("loader", "fabric_loader_version")
             register("minecraft", "minecraft_version")
         }
 
-        filesMatching("fabric.mod.json") { expand(props) }
+        filesMatching("fabric.mod.json") { expand(properties) }
 
         val mixinJava = "JAVA_${requiredJava.majorVersion}"
         filesMatching("*.mixins.json") { expand("java" to mixinJava) }
@@ -115,13 +119,13 @@ publishMods {
     file = loomx.modJar.map { it.archiveFile.get() }
     additionalFiles.from(loomx.modSourcesJar.map { it.archiveFile.get() })
     displayName = "Locator Border ${property("mod.version")} for ${sc.current.version} Fabric"
-    version = "${property("mod.version")}+${sc.current.version}-fabric"
+    version = project.version.toString()
     changelog = rootProject.file("CHANGELOG.md").readText()
     type = STABLE
     modLoaders.add("fabric")
 
     modrinth {
-        projectId = property("modrinth_id") as String
+        projectId = property("publish.modrinth") as String
 //        projectDescription = rootProject.file("README.md").readText()
         minecraftVersions.addAll(compatibleVersions)
         requires("fabric-api", "cloth-config")
@@ -131,7 +135,7 @@ publishMods {
     }
 
     curseforge {
-        projectId = property("curseforge_id") as String
+        projectId = property("publish.curseforge") as String
         minecraftVersions.addAll(compatibleVersions)
         javaVersions.add(requiredJava)
         clientRequired = true

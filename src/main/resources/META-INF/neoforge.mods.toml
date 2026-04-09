@@ -1,18 +1,17 @@
-license = "MIT"
-
 modLoader="javafml"
-loaderVersion="[2,)"
+loaderVersion="[1,)"
+
+issueTrackerUrl = "${issues}"
+license = "MIT"
 
 [[mods]]
 displayName = "Locator Border"
 modId = "locator_border"
+description = "${description}"
 version = "${version}"
 authors = "liqw"
-description = "Moves the pesky locator bar to the border of the screen, out of sight!"
 
 logoFile = "assets/locator-border/icon.png"
-#displayURL = "..."
-#issueTrackerUrl = "..."
 
 [[mixings]]
 config = "locator-border.mixins.json"

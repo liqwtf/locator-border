@@ -19,7 +19,7 @@ val requiredJava: JavaVersion = when {
 }
 
 // This can be used for publishing on Modrinth and Curseforge
-val compatibleVersions: List<String> = sc.properties.rawOrNull("mod", "version_range")
+val compatibleVersions: List<String> = sc.properties.rawOrNull("mod", "publish_versions")
     ?.asList().orEmpty().map { it.toString() }
 
 repositories {
@@ -77,7 +77,9 @@ tasks {
         }
 
         val props = buildMap {
-            register("version", "mod.version")
+            put("version", project.version.toString())
+            register("description", "description")
+            register("issues", "issues_url")
             register("minecraft", "minecraft_version")
         }
 
@@ -100,7 +102,6 @@ tasks {
     }
 }
 
-
 publishMods {
     val token = object {
         val modrinth = findProperty("MODRINTH_TOKEN") as? String
@@ -110,15 +111,15 @@ publishMods {
     dryRun = token.modrinth == null || token.curseforge == null
 
     file = tasks.jar.map { it.archiveFile.get() }
-    //additionalFiles.from(project.tasks.getByName("sourceJar"))
+    additionalFiles.from(project.tasks.getByName("sourcesJar"))
     displayName = "Locator Border ${property("mod.version")} for ${sc.current.version} NeoForge"
-    version = "${property("mod.version")}+${sc.current.version}-neoforge"
+    version = project.version.toString()
     changelog = rootProject.file("CHANGELOG.md").readText()
     type = STABLE
     modLoaders.add("neoforge")
 
     modrinth {
-        projectId = property("modrinth_id") as String
+        projectId = property("publish.modrinth") as String
         minecraftVersions.addAll(compatibleVersions)
         requires("cloth-config")
 
@@ -126,7 +127,7 @@ publishMods {
     }
 
     curseforge {
-        projectId = property("curseforge_id") as String
+        projectId = property("publish.curseforge") as String
         minecraftVersions.addAll(compatibleVersions)
         javaVersions.add(requiredJava)
         clientRequired = true
