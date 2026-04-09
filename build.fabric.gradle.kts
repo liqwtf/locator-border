@@ -19,7 +19,7 @@ val requiredJava: JavaVersion = when {
 }
 
 // This can be used for publishing on Modrinth and Curseforge
-val compatibleVersions: List<String> = sc.properties.rawOrNull("mod", "publish_versions")
+val compatibleVersions: List<String> = sc.properties.rawOrNull("publish_versions")
     ?.asList().orEmpty().map { it.toString() }
 
 repositories {
