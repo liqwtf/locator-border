@@ -11,7 +11,7 @@ pluginManagement {
 }
 
 plugins {
-    id("dev.kikugie.stonecutter") version "0.9.1"
+    id("dev.kikugie.stonecutter") version "0.9.2"
     id("dev.kikugie.loom-back-compat") version "0.2"
     id("dev.kikugie.fletching-table") version "0.1.0-alpha.22" apply false
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
