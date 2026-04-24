@@ -1,0 +1,62 @@
+text.autoconfig.locator-border:
+  title: "Locator Border Configuration"
+  category:
+    default: "General"
+    overrides: "Overrides"
+    miscellaneous: "Miscellaneous"
+  option:
+    enabled: "Enabled"
+    enabled.@Tooltip: "Master switch for all mod features"
+    waypoint:
+      .: "Waypoint"
+      inset: "Inset"
+      inset.@Tooltip: "Distance between waypoints and the edge of the screen"
+      color: "Color"
+      color.@Tooltip: "Decides the color of the waypoint"
+      playerFace:
+        .: "Render Player Faces"
+        enabled: "Enabled"
+        enabled.@Tooltip: "Render waypoint icons as player heads"
+        distanceScale: "Distance Scale"
+        distanceScale.@Tooltip: "Whether to scale player heads with distance"
+        outline:
+          .: "Outline"
+          style: "Style"
+          style.@Tooltip: "How the border around player face icons is drawn"
+          color: "Color"
+          color.@Tooltip: "Decides the color of the outline"
+      focus:
+        .: "Focus"
+        trigger: "Trigger"
+        trigger.@Tooltip: "What action causes a waypoint to be focused"
+        scale: "Scale"
+        scale.@Tooltip: "Waypoint size when focused"
+        inset: "Inset"
+        inset.@Tooltip: "Additional inset from the edge when focused"
+        labels:
+          .: "Labels"
+          name: "Display Player Name"
+          name.@Tooltip: "Show player's username next to their waypoint"
+          distance: "Display Distance"
+          distance.@Tooltip: "Show the distance to the waypoint"
+    overrides: "Player Overrides"
+    PlayerSpecificConfig:
+      .: "Override Entry"
+      name: "Player Name"
+      override:
+        .: "Override"
+        color: "Color"
+        color.@Tooltip: "Decides the color of the waypoint/outline"
+        alwaysFocused: "Always Focused"
+        alwaysFocused.@Tooltip: "Makes a waypoint focused regardless if the focus condition is met"
+        hide: "Hide"
+        hide.@Tooltip: "Prevents the waypoint from rendering"
+    compass:
+      .: "Cardinal Directions"
+      enabled: "Enabled"
+      enabled.@Tooltip: "Render cardinal directions (N, S, E, W)"
+      intercardinal: "Intercardinal"
+      intercardinal.@Tooltip: "Render intercardinal directions (NE, SE, SW, NW)"
+    forceWaypoints: "Force Waypoints"
+    forceWaypoints.@Tooltip: "Render waypoints (only players within distance) even if the server has the locator bar disabled"
+    animations: "Enable Animations"
