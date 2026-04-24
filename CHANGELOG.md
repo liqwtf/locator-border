@@ -1,2 +1,2 @@
-- clean up code
-- properly migrated to neoforge for all versions
+- update config
+- added option to hide specific waypoints (overrides)
