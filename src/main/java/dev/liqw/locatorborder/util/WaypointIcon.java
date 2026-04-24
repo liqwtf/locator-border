@@ -11,11 +11,8 @@ import net.minecraft.client.resources.WaypointStyle;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-//? if >1.21.7 {
+//~ if >1.21.7 'client.resources' -> 'world.entity.player'
 import net.minecraft.world.entity.player.PlayerSkin;
-//? } else
-//import net.minecraft.client.resources.PlayerSkin;
-
 import net.minecraft.world.waypoints.TrackedWaypoint;
 
 import java.util.Optional;
