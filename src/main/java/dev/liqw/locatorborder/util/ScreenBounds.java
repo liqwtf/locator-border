@@ -80,16 +80,18 @@ public class ScreenBounds {
         float directionX = (float) Math.sin(radians);
         float directionY = (float) -Math.cos(radians);
 
-        Point outer = project(directionX, directionY, config.margin);
+        Point outer = project(directionX, directionY, config.waypoint.inset);
 
-        boolean alwaysFocused = this.waypoint != null && this.waypoint.id().left()
+        var override = this.waypoint.id().left()
                 .map(minecraft.getConnection()::getPlayerInfo)
                 //~ if <1.21.7 'name()' -> 'getName()'
-                .map(info -> config.overrideCache.get(info.getProfile().name().toLowerCase()))
+                .map(info -> config.overrideCache.get(info.getProfile().name().toLowerCase()));
+
+        boolean alwaysFocused = this.waypoint != null && override
                 .map(o -> o.alwaysFocused)
                 .orElse(false);
 
-        boolean focused = alwaysFocused || switch (config.focusWaypoint.trigger) {
+        boolean focused = alwaysFocused || switch (config.waypoint.focus.trigger) {
             case Hover -> isHovering(outer, width, height);
             case Focal -> Math.abs(angle) < FOCAL_ANGLE_THRESHOLD;
             case PlayerList -> minecraft.options.keyPlayerList.isDown();
@@ -115,20 +117,22 @@ public class ScreenBounds {
         if (key != null) animationStates.put(key, currentProgress);
 
         float easedProgress = smoothstep(currentProgress);
-        float animatedInset = config.focusWaypoint.inset * easedProgress;
-        Point position = project(directionX, directionY, config.margin + (int) animatedInset);
+        float animatedInset = config.waypoint.focus.inset * easedProgress;
+        Point position = project(directionX, directionY, config.waypoint.inset + (int) animatedInset);
         float alpha = computeAlpha(position.x, position.y);
+
+        if (override.map(o -> o.hide).orElse(false)) alpha = 0;
 
         return new RenderState(position.x, position.y, directionX, directionY,
                 centerX(), centerY(), alpha, easedProgress, currentProgress, focused);
     }
 
     public RenderState computeStatic(float angle) {
-        double radians   = Math.toRadians(angle);
-        float directionX = (float)  Math.sin(radians);
+        double radians = Math.toRadians(angle);
+        float directionX = (float) Math.sin(radians);
         float directionY = (float) -Math.cos(radians);
-        Point position   = project(directionX, directionY, config.margin);
-        float alpha      = computeAlpha(position.x, position.y);
+        Point position = project(directionX, directionY, config.waypoint.inset);
+        float alpha = computeAlpha(position.x, position.y);
 
         return new RenderState(position.x, position.y, directionX, directionY,
                 centerX(), centerY(), alpha, 0f, 0f, false);

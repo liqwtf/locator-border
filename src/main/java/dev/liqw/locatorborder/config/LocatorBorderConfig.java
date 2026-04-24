@@ -13,25 +13,11 @@ public class LocatorBorderConfig implements ConfigData {
     @ConfigEntry.Gui.Excluded
     public transient Map<String, PlayerSpecificConfig.Override> overrideCache = new HashMap<>();
 
-    public enum WaypointColor {
-        Waypoint, Team,
-    }
-
     @ConfigEntry.Gui.Tooltip
     public boolean enabled = true;
 
-    @ConfigEntry.Gui.Tooltip
-    public int margin = 4;
-
-    @ConfigEntry.Gui.Tooltip
-    @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
-    public WaypointColor color = WaypointColor.Waypoint;
-
     @ConfigEntry.Gui.CollapsibleObject(startExpanded = true)
-    public RenderPlayerFace renderPlayerFace = new RenderPlayerFace();
-
-    @ConfigEntry.Gui.CollapsibleObject(startExpanded = true)
-    public FocusWaypoint focusWaypoint = new FocusWaypoint();
+    public Waypoint waypoint = new Waypoint();
 
     @ConfigEntry.Gui.Tooltip
     @ConfigEntry.Category("overrides")
@@ -57,63 +43,82 @@ public class LocatorBorderConfig implements ConfigData {
                 .collect(Collectors.toMap(e -> e.name.toLowerCase(), e -> e.override));
     }
 
-    public static class RenderPlayerFace {
-        public enum OutlineStyle {
-            Border, Shadow, None,
-        }
-
-        public enum OutlineColor {
-            Waypoint, Team, Black,
+    public static class Waypoint {
+        public enum Color {
+            Waypoint, Team,
         }
 
         @ConfigEntry.Gui.Tooltip
-        public boolean enabled = false;
-
-        @ConfigEntry.Gui.Tooltip
-        public boolean distanceScale = true;
-
-        @ConfigEntry.Gui.TransitiveObject
-        public Outline outline = new Outline();
-
-        public static class Outline {
-            @ConfigEntry.Gui.Tooltip
-            @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
-            public OutlineStyle style = OutlineStyle.Border;
-
-            @ConfigEntry.Gui.Tooltip
-            @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
-            public OutlineColor color = OutlineColor.Black;
-        }
-    }
-
-    public static class FocusWaypoint {
-        public enum Trigger {
-            Hover, Focal, PlayerList, None;
-
-            public String toString() {
-                return this.name().replaceAll("([a-z])([A-Z])", "$1 $2");
-            }
-        }
+        public int inset = 4;
 
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
-        public Trigger trigger = Trigger.Hover;
+        public Color color = Color.Waypoint;
 
-        @ConfigEntry.Gui.Tooltip
-        public float scale = 1.2f;
-
-        @ConfigEntry.Gui.Tooltip
-        public int inset = 2;
+        @ConfigEntry.Gui.CollapsibleObject(startExpanded = true)
+        public PlayerFace playerFace = new PlayerFace();
 
         @ConfigEntry.Gui.CollapsibleObject
-        public FocusLabels labels = new FocusLabels();
+        public FocusedWaypoint focus = new FocusedWaypoint();
 
-        public static class FocusLabels {
+        public static class PlayerFace {
             @ConfigEntry.Gui.Tooltip
-            public boolean showName = true;
+            public boolean enabled = false;
 
             @ConfigEntry.Gui.Tooltip
-            public boolean showDistance = false;
+            public boolean distanceScale = true;
+
+            @ConfigEntry.Gui.CollapsibleObject
+            public Outline outline = new Outline();
+
+            public static class Outline {
+                public enum Style {
+                    Border, Shadow, None,
+                }
+
+                public enum Color {
+                    Waypoint, Team, Black,
+                }
+
+                @ConfigEntry.Gui.Tooltip
+                @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
+                public Style style = Style.Border;
+
+                @ConfigEntry.Gui.Tooltip
+                @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
+                public Color color = Color.Black;
+            }
+        }
+
+        public static class FocusedWaypoint {
+            public enum Trigger {
+                Hover, Focal, PlayerList, None;
+
+                public String toString() {
+                    return this.name().replaceAll("([a-z])([A-Z])", "$1 $2");
+                }
+            }
+
+            @ConfigEntry.Gui.Tooltip
+            @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
+            public Trigger trigger = Trigger.Hover;
+
+            @ConfigEntry.Gui.Tooltip
+            public float scale = 1.2f;
+
+            @ConfigEntry.Gui.Tooltip
+            public int inset = 2;
+
+            @ConfigEntry.Gui.CollapsibleObject
+            public FocusLabels labels = new FocusLabels();
+
+            public static class FocusLabels {
+                @ConfigEntry.Gui.Tooltip
+                public boolean name = true;
+
+                @ConfigEntry.Gui.Tooltip
+                public boolean distance = false;
+            }
         }
     }
 
@@ -130,6 +135,9 @@ public class LocatorBorderConfig implements ConfigData {
 
             @ConfigEntry.Gui.Tooltip
             public boolean alwaysFocused = false;
+
+            @ConfigEntry.Gui.Tooltip
+            public boolean hide = false;
         }
     }
 
@@ -138,6 +146,6 @@ public class LocatorBorderConfig implements ConfigData {
         public boolean enabled = false;
 
         @ConfigEntry.Gui.Tooltip
-        public boolean showIntercardinal = false;
+        public boolean intercardinal = false;
     }
 }

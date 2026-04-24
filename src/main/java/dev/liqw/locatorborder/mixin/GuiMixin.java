@@ -59,7 +59,7 @@ public abstract class GuiMixin {
         float yaw = cameraEntity.getYRot();
 
         for (CardinalDirections.Direction point : CardinalDirections.DIRECTIONS) {
-            if (point.isIntercardinal() && !config.compass.showIntercardinal) continue;
+            if (point.isIntercardinal() && !config.compass.intercardinal) continue;
 
             ScreenBounds bounds = new ScreenBounds(this.minecraft, graphics, config);
             Font font = this.minecraft.font;

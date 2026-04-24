@@ -4,6 +4,7 @@ import dev.kikugie.stonecutter.StonecutterExperimentalAPI
 
 plugins {
     id("net.neoforged.moddev")
+    id("dev.kikugie.fletching-table")
     id("me.modmuss50.mod-publish-plugin")
 }
 
@@ -55,6 +56,12 @@ neoForge {
     }
 }
 
+fletchingTable {
+    lang.create("main") {
+        patterns.add("assets/locator-border/lang/**")
+    }
+}
+
 java {
     withSourcesJar()
     targetCompatibility = requiredJava
@@ -78,8 +85,8 @@ tasks {
 
         val props = buildMap {
             put("version", project.version.toString())
-            register("description", "description")
-            register("issues", "issues_url")
+            register("description", "mod.description")
+            register("issues", "mod.issues_url")
             register("minecraft", "minecraft_version")
         }
 

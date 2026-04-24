@@ -4,6 +4,7 @@ import dev.kikugie.stonecutter.StonecutterExperimentalAPI
 
 plugins {
     id("dev.kikugie.loom-back-compat")
+    id("dev.kikugie.fletching-table")
     id("me.modmuss50.mod-publish-plugin")
 }
 
@@ -63,6 +64,12 @@ loom {
     }
 }
 
+fletchingTable {
+    lang.create("main") {
+        patterns.add("assets/locator-border/lang/**")
+    }
+}
+
 java {
     withSourcesJar()
     targetCompatibility = requiredJava
@@ -86,9 +93,9 @@ tasks {
 
         val properties = buildMap {
             put("version", project.version.toString())
-            register("description", "description")
-            register("sources", "sources_url")
-            register("issues", "issues_url")
+            register("description", "mod.description")
+            register("sources", "mod.sources_url")
+            register("issues", "mod.issues_url")
             register("loader", "loader_version")
             register("minecraft", "minecraft_version")
         }
@@ -126,7 +133,6 @@ publishMods {
 
     modrinth {
         projectId = property("publish.modrinth") as String
-//        projectDescription = rootProject.file("README.md").readText()
         minecraftVersions.addAll(compatibleVersions)
         requires("fabric-api", "cloth-config")
         optional("modmenu")

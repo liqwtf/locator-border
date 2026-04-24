@@ -41,8 +41,8 @@ public abstract class LocatorBarRendererMixin {
         Level level = cameraEntity.level();
         Camera camera = this.minecraft.gameRenderer.getMainCamera();
 
-        boolean isFrozen = level.tickRateManager().isEntityFrozen(cameraEntity);
         //? if >1.21.7 {
+        boolean isFrozen = level.tickRateManager().isEntityFrozen(cameraEntity);
         PartialTickSupplier tickSupplier = entity -> delta.getGameTimeDeltaPartialTick(!isFrozen);
         //? }
 

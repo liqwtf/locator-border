@@ -35,7 +35,7 @@ public class WaypointIcon {
     }
 
     public int getBaseSize(TrackedWaypoint waypoint, Entity cameraEntity) {
-        boolean renderPlayerFace = config.renderPlayerFace.enabled && waypoint.id().left().isPresent();
+        boolean renderPlayerFace = config.waypoint.playerFace.enabled && waypoint.id().left().isPresent();
 
         if (renderPlayerFace) {
             float distance = Mth.sqrt((float) waypoint.distanceSquared(cameraEntity));
@@ -48,7 +48,7 @@ public class WaypointIcon {
     public void render(GuiGraphicsExtractor graphics, ScreenBounds.RenderState state, Entity cameraEntity, TrackedWaypoint waypoint) {
         UUID uuid = waypoint.id().left().orElse(null);
         PlayerInfo player = uuid != null ? minecraft.getConnection().getPlayerInfo(uuid) : null;
-        boolean renderPlayerFace = config.renderPlayerFace.enabled && uuid != null;
+        boolean renderPlayerFace = config.waypoint.playerFace.enabled && uuid != null;
 
         float distance = Mth.sqrt((float) waypoint.distanceSquared(cameraEntity));
         int baseSize = renderPlayerFace ? getPlayerFaceSize(distance) : BASE_DOT_SIZE;
@@ -57,10 +57,10 @@ public class WaypointIcon {
 
         if (renderPlayerFace) {
             PlayerSkin skin = player != null ? player.getSkin() : DefaultPlayerSkin.get(uuid);
-            int outlineColor = getOutlineColor(waypoint, config.renderPlayerFace.outline.color);
+            int outlineColor = getOutlineColor(waypoint, config.waypoint.playerFace.outline.color);
             int outlineSize = size + Math.max(1, (int) (FACE_OUTLINE_PX * scale)) * 2;
 
-            switch (config.renderPlayerFace.outline.style) {
+            switch (config.waypoint.playerFace.outline.style) {
                 case Border -> {
                     graphics.fill(-outlineSize / 2, -size / 2, (-outlineSize / 2) + outlineSize, (-size / 2) + size, state.setAlpha(outlineColor));
                     graphics.fill(-size / 2, -outlineSize / 2, (-size / 2) + size, (-outlineSize / 2) + outlineSize, state.setAlpha(outlineColor));
@@ -77,13 +77,13 @@ public class WaypointIcon {
             PlayerFaceExtractor.extractRenderState(graphics, skin, -size / 2, -size / 2, size, state.setAlpha(0xFFFFFFFF));
         } else {
             WaypointStyle style = minecraft.getWaypointStyles().get(waypoint.icon().style);
-            int color = getWaypointColor(waypoint, config.color);
+            int color = getWaypointColor(waypoint, config.waypoint.color);
 
             graphics.blitSprite(RenderPipelines.GUI_TEXTURED, style.sprite(distance), -size / 2, -size / 2, size, size, state.setAlpha(color));
         }
 
-        boolean showName = player != null && config.focusWaypoint.labels.showName;
-        boolean showDistance = config.focusWaypoint.labels.showDistance;
+        boolean showName = player != null && config.waypoint.focus.labels.name;
+        boolean showDistance = config.waypoint.focus.labels.distance;
 
         if ((showName || showDistance) && state.animationProgress() > 0f) {
             //~ if <1.21.7 'name()' -> 'getName()'
@@ -97,13 +97,13 @@ public class WaypointIcon {
     private static int darken(int color, float factor) {
         int a = (color >> 24) & 0xFF;
         int r = (int) (((color >> 16) & 0xFF) * factor);
-        int g = (int) (((color >>  8) & 0xFF) * factor);
-        int b = (int) (( color        & 0xFF) * factor);
+        int g = (int) (((color >> 8) & 0xFF) * factor);
+        int b = (int) ((color & 0xFF) * factor);
         return (a << 24) | (r << 16) | (g << 8) | b;
     }
 
     private int getPlayerFaceSize(float distance) {
-        if (config.renderPlayerFace.distanceScale) {
+        if (config.waypoint.playerFace.distanceScale) {
             if (distance >= WaypointStyle.DEFAULT_FAR_DISTANCE) return 4;
             if (distance >= WaypointStyle.DEFAULT_NEAR_DISTANCE) return 6;
         }
@@ -111,7 +111,7 @@ public class WaypointIcon {
     }
 
     private float getIconScale(float animationProgress) {
-        return Mth.lerp(animationProgress, 1.0f, config.focusWaypoint.scale);
+        return Mth.lerp(animationProgress, 1.0f, config.waypoint.focus.scale);
     }
 
     private Optional<Integer> getOverrideColor(TrackedWaypoint waypoint) {
@@ -119,7 +119,7 @@ public class WaypointIcon {
         return waypoint.id().left().map(minecraft.getConnection()::getPlayerInfo).map(info -> config.overrideCache.get(info.getProfile().name().toLowerCase())).map(o -> 0xFF000000 | o.color);
     }
 
-    public int getWaypointColor(TrackedWaypoint waypoint, LocatorBorderConfig.WaypointColor source) {
+    public int getWaypointColor(TrackedWaypoint waypoint, LocatorBorderConfig.Waypoint.Color source) {
         return getOverrideColor(waypoint).orElseGet(() -> switch (source) {
             case Waypoint -> waypoint.icon().color.orElseGet(() ->
                     waypoint.id().map(
@@ -136,10 +136,10 @@ public class WaypointIcon {
         });
     }
 
-    private int getOutlineColor(TrackedWaypoint waypoint, LocatorBorderConfig.RenderPlayerFace.OutlineColor source) {
+    private int getOutlineColor(TrackedWaypoint waypoint, LocatorBorderConfig.Waypoint.PlayerFace.Outline.Color source) {
         return getOverrideColor(waypoint).orElseGet(() -> switch (source) {
-            case Waypoint -> getWaypointColor(waypoint, LocatorBorderConfig.WaypointColor.Waypoint);
-            case Team -> getWaypointColor(waypoint, LocatorBorderConfig.WaypointColor.Team);
+            case Waypoint -> getWaypointColor(waypoint, LocatorBorderConfig.Waypoint.Color.Waypoint);
+            case Team -> getWaypointColor(waypoint, LocatorBorderConfig.Waypoint.Color.Team);
             case Black -> 0xFF000000;
         });
     }
