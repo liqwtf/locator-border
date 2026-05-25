@@ -8,23 +8,28 @@ import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.WaypointStyle;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 //~ if >1.21.7 'client.resources' -> 'world.entity.player'
 import net.minecraft.world.entity.player.PlayerSkin;
+import net.minecraft.world.level.Level;
+//? if >1.21.7 {
+import net.minecraft.world.waypoints.PartialTickSupplier;
+//? }
 import net.minecraft.world.waypoints.TrackedWaypoint;
 
 import java.util.Optional;
 import java.util.UUID;
 
 public class WaypointIcon {
+    private static final Identifier LOCATOR_BAR_ARROW_UP = Identifier.withDefaultNamespace("hud/locator_bar_arrow_up");
+    private static final Identifier LOCATOR_BAR_ARROW_DOWN = Identifier.withDefaultNamespace("hud/locator_bar_arrow_down");
     private static final int BASE_DOT_SIZE = 9;
     private static final int FACE_OUTLINE_PX = 1;
     private static final int SHADOW_OFFSET = 1;
     private static final float SHADOW_BRIGHTNESS = 0.25f;
-
-    private static final LocatorBorderConfig.PlayerSpecificConfig.Override DEFAULT_OVERRIDE = new LocatorBorderConfig.PlayerSpecificConfig.Override();
 
     private final Minecraft minecraft;
     private final LocatorBorderConfig config;
@@ -45,7 +50,7 @@ public class WaypointIcon {
         return BASE_DOT_SIZE;
     }
 
-    public void render(GuiGraphicsExtractor graphics, ScreenBounds.RenderState state, Entity cameraEntity, TrackedWaypoint waypoint) {
+    public void render(GuiGraphicsExtractor graphics, ScreenBounds.RenderState state, Entity cameraEntity, TrackedWaypoint waypoint /*? if >1.21.7 {*/ , PartialTickSupplier tickSupplier /*? }*/) {
         UUID uuid = waypoint.id().left().orElse(null);
         PlayerInfo player = uuid != null ? minecraft.getConnection().getPlayerInfo(uuid) : null;
         boolean renderPlayerFace = config.waypoint.playerFace.enabled && uuid != null;
@@ -91,6 +96,26 @@ public class WaypointIcon {
             String distanceText = showDistance ? (int) distance + "m" : null;
 
             renderLabels(graphics, nameText, distanceText, size, state);
+        }
+
+        Level level = cameraEntity.level();
+        TrackedWaypoint.PitchDirection pitchDirection = waypoint.pitchDirectionToCamera(level, this.minecraft.gameRenderer /*? if >1.21.7 {*/ , tickSupplier /*? }*/);
+
+        if (config.waypoint.arrows && pitchDirection != TrackedWaypoint.PitchDirection.NONE) {
+            Identifier arrowSprite = (pitchDirection == TrackedWaypoint.PitchDirection.DOWN) ? LOCATOR_BAR_ARROW_DOWN : LOCATOR_BAR_ARROW_UP;
+
+            int xOffset;
+            int yOffset;
+
+            if (Math.abs(state.directionY()) > Math.abs(state.directionX())) {
+                xOffset = (state.directionX() <= 0) ? (size / 2 + 2) : (-size / 2 - 7 - 2);
+                yOffset = -5 / 2;
+            } else {
+                xOffset = -7 / 2;
+                yOffset = (pitchDirection == TrackedWaypoint.PitchDirection.DOWN) ? (size / 2 + 2) : (-size / 2 - 5 - 2);
+            }
+
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, arrowSprite, xOffset, yOffset, 7, 5, state.setAlpha(0xFFFFFFFF));
         }
     }
 

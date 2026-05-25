@@ -4,7 +4,7 @@ mod:
   description: "Moves the pesky locator bar to the border of the screen, out of sight!"
   sources_url: "https://github.com/liqwtf/locator-border"
   issues_url: "https://github.com/liqwtf/locator-border/issues"
-  version: "1.2.5"
+  version: "1.2.6"
 
 loomx.loom_version: "1.16-SNAPSHOT"
 

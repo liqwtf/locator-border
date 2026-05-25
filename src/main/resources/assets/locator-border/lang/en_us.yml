@@ -13,6 +13,8 @@ text.autoconfig.locator-border:
       inset.@Tooltip: "Distance between waypoints and the edge of the screen"
       color: "Color"
       color.@Tooltip: "Decides the color of the waypoint"
+      arrows: "Direction Arrows"
+      arrows.@Tooltip: "Shows if the player is above or below your view"
       playerFace:
         .: "Render Player Faces"
         enabled: "Enabled"

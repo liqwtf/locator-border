@@ -27,6 +27,10 @@ stonecutter parameters {
             replace("PlayerFaceExtractor", "PlayerFaceRenderer")
         }
 
+        string(current.parsed < "1.21.11") {
+            replace("Identifier", "ResourceLocation")
+        }
+
         string(current.parsed <= "1.21.10", "!skip_replace") {
             replace("AutoConfigClient", "AutoConfig")
         }

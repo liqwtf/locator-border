@@ -1,2 +1,1 @@
-- update config
-- added option to hide specific waypoints (overrides)
+- added an option to display direction arrows (vanilla feature), to show if the player is above or below wherever you're looking

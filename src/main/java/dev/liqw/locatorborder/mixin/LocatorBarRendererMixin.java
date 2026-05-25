@@ -55,7 +55,7 @@ public abstract class LocatorBarRendererMixin {
             int size = icon.getBaseSize(waypoint, cameraEntity);
 
             bounds.project(angle, size, size, (g, state) -> {
-                icon.render(g, state, cameraEntity, waypoint);
+                icon.render(g, state, cameraEntity, waypoint /*? if >1.21.7 {*/ , tickSupplier /*? }*/);
             });
         });
     }

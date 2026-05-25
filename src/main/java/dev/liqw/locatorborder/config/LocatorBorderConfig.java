@@ -55,6 +55,9 @@ public class LocatorBorderConfig implements ConfigData {
         @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
         public Color color = Color.Waypoint;
 
+        @ConfigEntry.Gui.Tooltip
+        public boolean arrows = false;
+
         @ConfigEntry.Gui.CollapsibleObject(startExpanded = true)
         public PlayerFace playerFace = new PlayerFace();
 
