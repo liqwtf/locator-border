@@ -125,7 +125,7 @@ publishMods {
 
     file = loomx.modJar.map { it.archiveFile.get() }
     additionalFiles.from(loomx.modSourcesJar.map { it.archiveFile.get() })
-    displayName = "Locator Border ${property("mod.version")} for ${sc.current.version} Fabric"
+    displayName = "Locator Border ${property("mod.version")} for Fabric ${sc.current.version}"
     version = project.version.toString()
     changelog = rootProject.file("CHANGELOG.md").readText()
     type = STABLE
