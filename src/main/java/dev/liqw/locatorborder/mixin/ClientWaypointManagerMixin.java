@@ -25,45 +25,45 @@ import java.util.function.Consumer;
 
 @Mixin(ClientWaypointManager.class)
 public abstract class ClientWaypointManagerMixin {
-//    @Shadow @Final private Map<Either<UUID, String>, TrackedWaypoint> waypoints;
-//    @Shadow public abstract void trackWaypoint(TrackedWaypoint waypoint);
-//
-//    @Inject(method = "forEachWaypoint", at = @At("HEAD"))
-//    private void populateWaypointsMap(Entity fromEntity, Consumer<TrackedWaypoint> consumer, CallbackInfo ci) {
-//        if (!(fromEntity.level() instanceof ClientLevel level)) return;
-//
-//        LocatorBorderConfig config = LocatorBorder.getConfig();
-//
-//        if (config.forceWaypoints) {
-//            ClientPacketListener connection = Minecraft.getInstance().getConnection();
-//
-//            for (Player player : level.players()) {
-//                if (player == fromEntity || player.isInvisible()) continue;
-//
-//                UUID uuid = player.getUUID();
-//                if (uuid.version() != 4 || (connection != null ? connection.getPlayerInfo(uuid) : null) == null) continue;
-//
-//                Either<UUID, String> key = Either.left(uuid);
-//                TrackedWaypoint existing = waypoints.get(key);
-//                TrackedWaypoint waypoint = TrackedWaypoint.setPosition(uuid, Waypoint.Icon.NULL, player.blockPosition());
-//
-//                if (existing == null) {
-//                    this.trackWaypoint(waypoint);
-//                } else {
-//                    existing.update(waypoint);
-//                }
-//            }
-//        }
-//
-//        waypoints.values().removeIf(waypoint ->
-//                waypoint.id().left().map(uuid -> !config.forceWaypoints || level.getPlayerByUUID(uuid) == null).orElse(false)
-//        );
-//    }
-//
-//    @Inject(method = "hasWaypoints", at = @At("HEAD"), cancellable = true)
-//    private void forceHasWaypoints(CallbackInfoReturnable<Boolean> cir) {
-//        if (LocatorBorder.getConfig().forceWaypoints) {
-//            cir.setReturnValue(true);
-//        }
-//    }
+    @Shadow @Final private Map<Either<UUID, String>, TrackedWaypoint> waypoints;
+    @Shadow public abstract void trackWaypoint(TrackedWaypoint waypoint);
+
+    @Inject(method = "forEachWaypoint", at = @At("HEAD"))
+    private void populateWaypointsMap(Entity fromEntity, Consumer<TrackedWaypoint> consumer, CallbackInfo ci) {
+        if (!(fromEntity.level() instanceof ClientLevel level)) return;
+
+        LocatorBorderConfig config = LocatorBorder.getConfig();
+
+        if (config.forceWaypoints) {
+            ClientPacketListener connection = Minecraft.getInstance().getConnection();
+
+            for (Player player : level.players()) {
+                if (player == fromEntity || player.isInvisible()) continue;
+
+                UUID uuid = player.getUUID();
+                if (uuid.version() != 4 || (connection != null ? connection.getPlayerInfo(uuid) : null) == null) continue;
+
+                Either<UUID, String> key = Either.left(uuid);
+                TrackedWaypoint existing = waypoints.get(key);
+                TrackedWaypoint waypoint = TrackedWaypoint.setPosition(uuid, Waypoint.Icon.NULL, player.blockPosition());
+
+                if (existing == null) {
+                    this.trackWaypoint(waypoint);
+                } else {
+                    existing.update(waypoint);
+                }
+            }
+        }
+
+        waypoints.values().removeIf(waypoint ->
+                waypoint.id().left().map(uuid -> !config.forceWaypoints || level.getPlayerByUUID(uuid) == null).orElse(false)
+        );
+    }
+
+    @Inject(method = "hasWaypoints", at = @At("HEAD"), cancellable = true)
+    private void forceHasWaypoints(CallbackInfoReturnable<Boolean> cir) {
+        if (LocatorBorder.getConfig().forceWaypoints) {
+            cir.setReturnValue(true);
+        }
+    }
 }
