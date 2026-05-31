@@ -41,17 +41,10 @@ public abstract class ClientWaypointManagerMixin {
                 if (player == fromEntity || player.isInvisible()) continue;
 
                 UUID uuid = player.getUUID();
+
                 if (uuid.version() != 4 || (connection != null ? connection.getPlayerInfo(uuid) : null) == null) continue;
 
-                Either<UUID, String> key = Either.left(uuid);
-                TrackedWaypoint existing = waypoints.get(key);
-                TrackedWaypoint waypoint = TrackedWaypoint.setPosition(uuid, Waypoint.Icon.NULL, player.blockPosition());
-
-                if (existing == null) {
-                    this.trackWaypoint(waypoint);
-                } else {
-                    existing.update(waypoint);
-                }
+                consumer.accept(TrackedWaypoint.setPosition(uuid, Waypoint.Icon.NULL, player.blockPosition()));
             }
         }
 
