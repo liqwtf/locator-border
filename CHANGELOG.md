@@ -1,1 +1,1 @@
-- fixed force waypoints option
+- fixed network protocol error, again
